@@ -14,7 +14,6 @@ export const SOCIAL_LINKS = [
     { name: 'github', url: 'https://github.com/Haider' },
     { name: 'linkedin', url: 'https://www.linkedin.com/in/Haider' },
     { name: 'facebook', url: 'https://www.facebook.com/Haider.2000' },
-    { name: 'Old Version', url: GENERAL_INFO.oldPortfolio },
 ];
 
 export const MY_STACK = {
