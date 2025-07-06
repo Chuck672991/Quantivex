@@ -288,22 +288,18 @@ export const PROJECTS: IProject[] = [
 export const MY_EXPERIENCE = [
     {
         title: 'Software Engineer (Frontend)',
-        company: 'Strativ AB',
-        duration: 'Dec 2024 - Present',
-    },
-    {
-        title: 'Frontend Developer',
-        company: 'Epikcoders',
-        duration: 'Oct 2023 - Nov 2024',
+        company: 'Siliconplex',
+        duration: 'May 2025 - Present',
     },
     {
         title: 'FRONTEND ENGINEER',
-        company: 'Anchorblock Technology',
-        duration: 'Oct 2022 - Sep 2023',
+        company: '360XpertSolutions',
+        duration: 'Dec 2023 - March 2025',
     },
     {
-        title: 'Frontend Developer (Part-time)',
-        company: 'Branex IT',
-        duration: 'Jan 2022 - Oct 2022',
+        title: 'FRONTEND Developer',
+        company: 'Remote Projects',
+        duration: 'Oct 2022 - Dec 2023',
     },
+
 ];
