@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --background: 24 33% 94%;         /* Light warm beige */
+    --background-light: 20 30% 97%;   /* Very light terracotta */
+    --foreground: 30 20% 20%;         /* Dark earthy brown text */
+
+    --card: 20 25% 96%;               /* Off-white with a hint of clay */
+    --card-foreground: 30 20% 20%;
+
+    --popover: 18 40% 95%;            /* Soft clay beige */
+    --popover-foreground: 30 20% 20%;
+
+    --primary: 14 59% 45%;            /* Rustic terracotta */
+    --primary-foreground: 33 100% 98%;/* Light cream text for contrast */
+
+    --secondary: 142 27% 36%;         /* Forest green */
+    --secondary-foreground: 140 30% 92%; /* Pale green for contrast */
+
+    --muted: 24 15% 80%;              /* Muted brownish background */
+    --muted-foreground: 30 15% 30%;   /* Muted brown text */
+
+    --accent: 48 70% 80%;             /* Warm golden tan */
+    --accent-foreground: 30 30% 20%;  /* Dark brown text */
+
+    --destructive: 0 60% 50%;         /* Warm earthy red */
+    --destructive-foreground: 0 50% 95%;
+
+    --border: 24 15% 75%;             /* Subtle earthy border */
+    --input: 24 20% 88%;              /* Very light terracotta */
+    --ring: 14 59% 45%;               /* Terracotta ring */
+
+    --chart-1: 14 59% 45%;            /* Rustic terracotta */
+    --chart-2: 142 27% 36%;           /* Forest green */
+    --chart-3: 30 20% 60%;            /* Earthy brown */
+    --chart-4: 48 70% 70%;            /* Soft golden tan */
+    --chart-5: 140 30% 50%;           /* Desaturated green */
+  }
+}
+
+
+
+@layer base {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    * {
+        @apply border-border !cursor-none;
+    }
+    body {
+        @apply bg-background text-foreground font-roboto-flex;
+    }
+}
+
+@layer components {
+    .grid {
+        @apply gap-[25px];
+    }
+
+    .markdown-text ul {
+        @apply pl-5 mt-2 list-disc;
+    }
+}
