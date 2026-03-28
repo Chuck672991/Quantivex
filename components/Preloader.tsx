@@ -42,18 +42,18 @@ const Preloader = () => {
 
     return (
         <div className="fixed inset-0 z-[6] flex" ref={preloaderRef}>
-            <div className="preloader-item h-full w-[10%] bg-[#F7EFE7]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#FBF5EF]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#E8D8C5]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#DDD0C3]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#CBB6A3]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#BCA592]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#A48D7A]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#8B7765]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#705F50]"></div>
-            <div className="preloader-item h-full w-[10%] bg-[#3D342D]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#EEF0E5]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#D8DDCA]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#C2CAAE]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#A9B48E]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#8FA06E]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#7A8C5A]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#637846]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#4E6035]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#3B4D27]"></div>
+            <div className="preloader-item h-full w-[10%] bg-[#252F17]"></div>
 
-            <p className="name-text flex text-[#F7EFE7] text-[20vw] lg:text-[200px] font-anton text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 leading-none overflow-hidden">
+            <p className="name-text flex text-[#EEF0E5] text-[20vw] lg:text-[200px] font-anton text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 leading-none overflow-hidden">
                 <span className="inline-block translate-y-full">H</span>
                 <span className="inline-block translate-y-full">A</span>
                 <span className="inline-block translate-y-full">I</span>
