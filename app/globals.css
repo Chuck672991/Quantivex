@@ -3,40 +3,40 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --background: 24 33% 94%;         /* Light warm beige */
-    --background-light: 20 30% 97%;   /* Very light terracotta */
-    --foreground: 30 20% 20%;         /* Dark earthy brown text */
+    --background: 80 15% 93%;         /* Light olive-tinted off-white */
+    --background-light: 80 12% 96%;   /* Near-white with subtle olive hint */
+    --foreground: 80 30% 12%;         /* Very dark olive for body text */
 
-    --card: 20 25% 96%;               /* Off-white with a hint of clay */
-    --card-foreground: 30 20% 20%;
+    --card: 80 12% 96%;               /* Off-white card surface */
+    --card-foreground: 80 30% 12%;
 
-    --popover: 18 40% 95%;            /* Soft clay beige */
-    --popover-foreground: 30 20% 20%;
+    --popover: 80 12% 95%;            /* Soft olive white */
+    --popover-foreground: 80 30% 12%;
 
-    --primary: 14 59% 45%;            /* Rustic terracotta */
-    --primary-foreground: 33 100% 98%;/* Light cream text for contrast */
+    --primary: 79 42% 38%;            /* Olive green */
+    --primary-foreground: 0 0% 98%;   /* White text on primary */
 
-    --secondary: 142 27% 36%;         /* Forest green */
-    --secondary-foreground: 140 30% 92%; /* Pale green for contrast */
+    --secondary: 40 28% 48%;          /* Warm khaki / tan */
+    --secondary-foreground: 40 15% 95%;
 
-    --muted: 24 15% 80%;              /* Muted brownish background */
-    --muted-foreground: 30 15% 30%;   /* Muted brown text */
+    --muted: 79 10% 80%;              /* Desaturated olive muted bg */
+    --muted-foreground: 79 15% 38%;   /* Muted olive-grey text */
 
-    --accent: 48 70% 80%;             /* Warm golden tan */
-    --accent-foreground: 30 30% 20%;  /* Dark brown text */
+    --accent: 45 55% 72%;             /* Warm gold — complements olive */
+    --accent-foreground: 79 35% 12%;  /* Dark olive on accent */
 
-    --destructive: 0 60% 50%;         /* Warm earthy red */
-    --destructive-foreground: 0 50% 95%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 24 15% 75%;             /* Subtle earthy border */
-    --input: 24 20% 88%;              /* Very light terracotta */
-    --ring: 14 59% 45%;               /* Terracotta ring */
+    --border: 79 12% 76%;             /* Subtle olive border */
+    --input: 79 12% 89%;              /* Very light olive input bg */
+    --ring: 79 42% 38%;               /* Olive focus ring */
 
-    --chart-1: 14 59% 45%;            /* Rustic terracotta */
-    --chart-2: 142 27% 36%;           /* Forest green */
-    --chart-3: 30 20% 60%;            /* Earthy brown */
-    --chart-4: 48 70% 70%;            /* Soft golden tan */
-    --chart-5: 140 30% 50%;           /* Desaturated green */
+    --chart-1: 79 42% 38%;            /* Olive green */
+    --chart-2: 40 28% 48%;            /* Khaki */
+    --chart-3: 79 20% 58%;            /* Lighter olive */
+    --chart-4: 45 55% 65%;            /* Gold */
+    --chart-5: 79 40% 25%;            /* Dark olive */
   }
 }
 

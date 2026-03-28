@@ -15,20 +15,20 @@ export default {
                     DEFAULT: 'hsl(var(--background))',
                     light: 'hsl(var(--background-light))',
                 },
-                terracotta: {
-                    DEFAULT: '#CB6843',     // rustic terracotta base
-                    light: '#E89A71',
-                    dark: '#A34C30',
+                olive: {
+                    DEFAULT: '#6B7C35',     // olive green base
+                    light: '#8FA04C',
+                    dark: '#4D5A22',
                 },
-                forest: {
-                    DEFAULT: '#2E4D3B',     // deep forest green
-                    light: '#4D6B54',
-                    dark: '#1D3627',
+                khaki: {
+                    DEFAULT: '#8B7A55',     // warm khaki / tan
+                    light: '#B0A070',
+                    dark: '#6A5C3C',
                 },
-                clay: {
-                    DEFAULT: '#C4A38A',     // warm neutral clay tone
-                    light: '#E0C7B3',
-                    dark: '#9F8065',
+                sage: {
+                    DEFAULT: '#7A8C6E',     // muted sage green
+                    light: '#9DAF90',
+                    dark: '#5C6C50',
                 },
                 foreground: 'hsl(var(--foreground))',
                 card: {

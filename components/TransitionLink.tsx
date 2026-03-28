@@ -49,10 +49,7 @@ const TransitionLink = ({
     );
 
     return (
-        <Link href={"#"} {...rest} onClick={
-            // handleLinkClick
-            () => { }
-        }>
+        <Link href={href} {...rest} onClick={handleLinkClick}>
             {children}
         </Link>
     );

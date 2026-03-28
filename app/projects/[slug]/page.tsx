@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import ProjectDetails from './_components/ProjectDetails';
-import { PROJECTS } from '@/lib/data';
+import { PROJECTS as ALL_PROJECTS } from '@/lib/data';
+
+const PROJECTS = ALL_PROJECTS.filter((p) => !p.hidden);
 import { Metadata } from 'next';
 
 export const generateStaticParams = async () => {
