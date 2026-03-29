@@ -41,7 +41,7 @@ const Banner = () => {
                 ref={containerRef}
             >
                 <div className="max-md:grow max-md:flex flex-col justify-center items-start max-w-[544px]">
-                    <h1 className="banner-title slide-up-and-fade leading-[.95] text-6xl sm:text-[80px] font-anton">
+                    <h1 className="banner-title slide-up-and-fade leading-[.95] text-5xl sm:text-6xl md:text-[80px] font-anton">
                         <span className="text-primary">FULL-STACK</span>
                         <br /> <span className="ml-4">DEVELOPER</span>
                     </h1>
@@ -58,7 +58,7 @@ const Banner = () => {
                         as="link"
                         target="_blank"
                         rel="noopener noreferrer"
-                        href={GENERAL_INFO.upworkProfile}
+                        href={GENERAL_INFO.linkedinProfile}
                         variant="primary"
                         className="mt-9 banner-button hover:text-muted   slide-up-and-fade"
                     >
@@ -66,28 +66,28 @@ const Banner = () => {
                     </Button>
                 </div>
 
-                <div className="md:absolute bottom-[10%] right-[4%] flex md:flex-col gap-4 md:gap-8 text-center md:text-right">
+                <div className="md:absolute bottom-[10%] right-[4%] flex md:flex-col gap-4 md:gap-8 text-center md:text-right w-full max-md:justify-between max-md:pb-4">
                     <div className="slide-up-and-fade">
-                        <h5 className="text-3xl sm:text-4xl font-anton text-primary mb-1.5">
+                        <h5 className="text-2xl sm:text-4xl font-anton text-primary mb-1">
                             4+
                         </h5>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                             Years of Experience
                         </p>
                     </div>
                     <div className="slide-up-and-fade">
-                        <h5 className="text-3xl sm:text-4xl font-anton text-primary mb-1.5">
+                        <h5 className="text-2xl sm:text-4xl font-anton text-primary mb-1">
                             10+
                         </h5>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                             Completed Projects
                         </p>
                     </div>
                     <div className="slide-up-and-fade">
-                        <h5 className="text-3xl sm:text-4xl font-anton text-primary mb-1.5">
+                        <h5 className="text-2xl sm:text-4xl font-anton text-primary mb-1">
                             15K+
                         </h5>
-                        <p className="text-muted-foreground">Hours Worked</p>
+                        <p className="text-muted-foreground text-xs sm:text-sm">Hours Worked</p>
                     </div>
                 </div>
             </div>

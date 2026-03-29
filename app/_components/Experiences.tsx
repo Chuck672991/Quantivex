@@ -52,7 +52,7 @@ const Experiences = () => {
     );
 
     return (
-        <section className="py-section" id="my-experience">
+        <section className="py-section max-md:py-20" id="my-experience">
             <div className="container" ref={containerRef}>
                 <SectionTitle title="My Experience" />
 
@@ -62,7 +62,7 @@ const Experiences = () => {
                             <p className="text-xl text-muted-foreground">
                                 {item.company}
                             </p>
-                            <p className="text-5xl font-anton leading-none mt-3.5 mb-2.5">
+                            <p className="text-2xl sm:text-4xl md:text-5xl font-anton leading-tight mt-3.5 mb-2.5">
                                 {item.title}
                             </p>
                             <p className="text-lg text-muted-foreground">

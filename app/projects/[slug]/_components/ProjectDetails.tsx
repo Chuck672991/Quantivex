@@ -85,7 +85,7 @@ const ProjectDetails = ({ project }: Props) => {
     );
 
     return (
-        <section className="pt-5 pb-14">
+        <section className="pt-5 pb-14 px-1">
             <div className="container" ref={containerRef}>
                 <TransitionLink
                     back
@@ -101,11 +101,9 @@ const ProjectDetails = ({ project }: Props) => {
                     id="info"
                 >
                     <div className="relative w-full">
-                        <div className="flex items-start gap-6 mx-auto mb-10 max-w-[635px]">
-                            <h1 className="fade-in-later opacity-0 text-4xl md:text-[60px] leading-none font-anton overflow-hidden">
-                                <span className="inline-block">
-                                    {project.title}
-                                </span>
+                        <div className="flex flex-wrap items-start gap-4 mx-auto mb-10 max-w-[635px] w-full">
+                            <h1 className="fade-in-later opacity-0 text-3xl sm:text-4xl md:text-[60px] leading-tight font-anton flex-1">
+                                {project.title}
                             </h1>
 
                             <div className="fade-in-later opacity-0 flex gap-2">
@@ -132,7 +130,7 @@ const ProjectDetails = ({ project }: Props) => {
                             </div>
                         </div>
 
-                        <div className="max-w-[635px] space-y-7 pb-20 mx-auto">
+                        <div className="max-w-[635px] w-full space-y-7 pb-20 mx-auto">
                             <div className="fade-in-later">
                                 <p className="text-muted-foreground font-anton mb-3">
                                     Year

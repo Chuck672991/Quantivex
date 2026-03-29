@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://cosmeticchemist.com/_next/static/chunks/821ab7e91356c438.js\")"
+    ]
+  }
+}

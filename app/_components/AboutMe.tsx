@@ -52,9 +52,9 @@ const AboutMe = () => {
     );
 
     return (
-        <section className="pb-section" id="about-me">
+        <section className="pb-section max-md:pb-20" id="about-me">
             <div className="container" ref={container}>
-                <h2 className="text-4xl md:text-6xl font-thin mb-20 slide-up-and-fade">
+                <h2 className="text-2xl sm:text-4xl md:text-6xl font-thin mb-10 md:mb-20 slide-up-and-fade">
                     I build production-ready applications — from mobile apps on
                     the App Store to AI-powered platforms and real-time systems.
                 </h2>
@@ -63,14 +63,14 @@ const AboutMe = () => {
                     This is me.
                 </p>
 
-                <div className="grid md:grid-cols-12 mt-9">
+                <div className="grid md:grid-cols-12 mt-9 gap-6 md:gap-0">
                     <div className="md:col-span-5">
-                        <p className="text-5xl slide-up-and-fade">
+                        <p className="text-3xl sm:text-5xl slide-up-and-fade">
                             Hi, I&apos;m Haider.
                         </p>
                     </div>
                     <div className="md:col-span-7">
-                        <div className="text-lg text-muted-foreground max-w-[450px]">
+                        <div className="text-base sm:text-lg text-muted-foreground max-w-[450px]">
                             <p className="slide-up-and-fade">
                                 I&apos;m a Full-Stack Developer with 4+ years of
                                 experience specializing in React, Next.js, and

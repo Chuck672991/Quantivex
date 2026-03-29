@@ -8,6 +8,7 @@ export const GENERAL_INFO = {
 
     oldPortfolio: 'https://www.legacy.me.toinfinite.dev',
     upworkProfile: 'https://www.upwork.com/freelancers/Haider',
+    linkedinProfile: 'https://www.linkedin.com/in/haider-ali-74122722a/',
 };
 
 export const SOCIAL_LINKS = [
@@ -218,7 +219,6 @@ export const PROJECTS: IProject[] = [
         longThumbnail: '/projects/long/qbs.jpg',
         images: [
             '/projects/images/qbs-1.png',
-            '/projects/images/mwi-ai-1.png',
         ],
     },
     {
@@ -267,7 +267,6 @@ export const PROJECTS: IProject[] = [
         longThumbnail: '/projects/thumbnail/eagle-iot.png',
         images: [
             '/projects/thumbnail/eagle-iot.png',
-            '/projects/images/mwi-ai-1.png',
         ],
     },
     {
@@ -415,6 +414,57 @@ export const PROJECTS: IProject[] = [
             '/projects/images/property-pro-1.png',
             '/projects/images/property-pro-2.png',
             '/projects/images/property-pro-3.png',
+        ],
+    },
+    {
+        title: 'Cosmetic Chemist',
+        slug: 'cosmetic-chemist',
+        liveUrl: 'https://cosmeticchemist.com/',
+        year: 2022,
+        description: `
+      A visually immersive 3D marketing website built for Cosmetic Chemist — an elite group of cosmetic chemists, formulators, and industry experts. The site combines real-time 3D product models with GSAP-powered animations to deliver a premium, interactive brand experience. <br/><br/>
+
+      Key Features:<br/>
+      <ul>
+        <li>🧊 3D Product Models: Interactive GLB/GLTF models rendered in-browser using Three.js and React Three Fiber</li>
+        <li>🎬 GSAP Animations: Scroll-triggered animations, smooth transitions, and parallax effects throughout</li>
+        <li>🌐 Hero Section: Full-screen animated 3D sphere with floating product model on entry</li>
+        <li>🎨 Dark Luxury Aesthetic: High-contrast black background with pink accents for a premium feel</li>
+        <li>📱 Fully Responsive: Adapts the 3D experience gracefully across all screen sizes</li>
+        <li>🔊 Ambient Audio: Subtle background audio integration to enhance brand immersion</li>
+      </ul><br/>
+
+      Technical Highlights:
+      <ul>
+        <li>Built with Next.js for fast page loads and SEO-optimised static generation</li>
+        <li>Integrated Three.js / React Three Fiber for real-time 3D rendering of .glb product models</li>
+        <li>Implemented complex GSAP ScrollTrigger sequences for section reveal animations</li>
+        <li>Session duration increased by 50% compared to client's previous static site</li>
+      </ul>
+      `,
+        role: `
+      Frontend Developer (Freelance) <br/>
+      <ul>
+        <li>🧊 Built the 3D scene using Three.js and React Three Fiber with custom lighting and materials</li>
+        <li>🎬 Orchestrated all GSAP animations — hero entrance, scroll-triggered reveals, and hover effects</li>
+        <li>🏗️ Architected the Next.js project structure, routing, and component library</li>
+        <li>🎨 Translated Figma designs into pixel-perfect, animated UI components</li>
+        <li>🚀 Deployed and optimised for performance — lazy-loaded 3D assets, compressed textures</li>
+      </ul>
+      `,
+        techStack: [
+            'Next.js',
+            'Three.js',
+            'React Three Fiber',
+            'GSAP',
+            'Tailwind CSS',
+            'TypeScript',
+        ],
+        thumbnail: '/projects/thumbnail/cosmetic-chemist.png',
+        longThumbnail: '/projects/long/cosmetic-chemist.png',
+        images: [
+            '/projects/images/cosmetic-chemist-1.png',
+            '/projects/images/cosmetic-chemist-2.png',
         ],
     },
 ];
