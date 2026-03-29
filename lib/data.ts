@@ -14,7 +14,7 @@ export const GENERAL_INFO = {
 export const SOCIAL_LINKS = [
     { name: 'github', url: 'https://github.com/Chuck672991' },
     { name: 'linkedin', url: 'https://www.linkedin.com/in/haider-ali-74122722a/' },
-    { name: 'facebook', url: 'https://www.facebook.com/Haider.2000' },
+    // { name: 'facebook', url: 'https://www.facebook.com/Haider.2000' },
 ];
 
 export const MY_STACK = {
