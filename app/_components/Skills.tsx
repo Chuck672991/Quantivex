@@ -5,9 +5,16 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
 import Image from 'next/image';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+const CATEGORY_LABELS: Record<string, string> = {
+    frontend: 'Frontend & UI',
+    backend: 'Backend',
+    database: 'Databases',
+    tools: 'Tools & DevOps',
+};
 
 const Skills = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -16,7 +23,6 @@ const Skills = () => {
         () => {
             const slideUpEl =
                 containerRef.current?.querySelectorAll('.slide-up');
-
             if (!slideUpEl?.length) return;
 
             const tl = gsap.timeline({
@@ -27,7 +33,6 @@ const Skills = () => {
                     scrub: 0.5,
                 },
             });
-
             tl.from('.slide-up', {
                 opacity: 0,
                 y: 40,
@@ -48,42 +53,45 @@ const Skills = () => {
                     scrub: 1,
                 },
             });
-
-            tl.to(containerRef.current, {
-                y: -150,
-                opacity: 0,
-            });
+            tl.to(containerRef.current, { y: -150, opacity: 0 });
         },
         { scope: containerRef },
     );
 
     return (
-        <section id="my-stack" ref={containerRef} className="pb-section max-md:pb-20">
+        <section
+            id="my-stack"
+            ref={containerRef}
+            className="pb-section max-md:pb-20"
+        >
             <div className="container">
                 <SectionTitle title="My Stack" />
 
                 <div className="space-y-12 md:space-y-20">
                     {Object.entries(MY_STACK).map(([key, value]) => (
-                        <div className="grid sm:grid-cols-12 gap-4 sm:gap-0" key={key}>
+                        <div
+                            className="grid sm:grid-cols-12 gap-4 sm:gap-0"
+                            key={key}
+                        >
                             <div className="sm:col-span-5">
                                 <p className="slide-up text-3xl sm:text-4xl md:text-5xl font-anton leading-none text-muted-foreground uppercase">
-                                    {key}
+                                    {CATEGORY_LABELS[key] ?? key}
                                 </p>
                             </div>
 
                             <div className="sm:col-span-7 flex gap-x-8 gap-y-7 flex-wrap">
                                 {value.map((item) => (
                                     <div
-                                        className="slide-up flex gap-2.5 items-center leading-none"
+                                        className="slide-up group flex gap-2.5 items-center leading-none hover:text-primary transition-colors duration-200"
                                         key={item.name}
                                     >
                                         <div>
                                             <Image
                                                 src={item.icon}
                                                 alt={item.name}
-                                                width="32"
-                                                height="32"
-                                                className="max-h-8 w-8"
+                                                width={32}
+                                                height={32}
+                                                className="max-h-8 w-8 group-hover:scale-110 transition-transform duration-200"
                                             />
                                         </div>
                                         <span className="text-lg sm:text-2xl capitalize">

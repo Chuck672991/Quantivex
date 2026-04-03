@@ -63,3 +63,52 @@
         @apply pl-5 mt-2 list-disc;
     }
 }
+
+/* ─── Marquee ─────────────────────────────────────────────── */
+@keyframes marquee-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    animation: marquee-scroll 45s linear infinite;
+    will-change: transform;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
+/* ─── Decorative hero orb ─────────────────────────────────── */
+.hero-orb {
+    background: radial-gradient(
+        circle,
+        hsl(var(--primary) / 0.12) 0%,
+        transparent 70%
+    );
+}
+
+/* ─── Available-for-work dot (ping ring handled by Tailwind animate-ping) ── */
+/* nothing extra needed — Tailwind's animate-ping covers it */
+
+/* ─── Gradient text utility ───────────────────────────────── */
+.text-gradient {
+    background: linear-gradient(
+        135deg,
+        hsl(var(--primary)) 0%,
+        hsl(var(--accent)) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ─── Timeline line fill (scaleY GSAP origin) ─────────────── */
+.timeline-line-fill {
+    transform-origin: top center;
+}
+
+/* ─── Service card top-border reveal ──────────────────────── */
+.service-top-line {
+    transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}

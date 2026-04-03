@@ -1,4 +1,3 @@
-import { GENERAL_INFO } from '@/lib/data';
 import { GitFork, Star } from 'lucide-react';
 
 interface RepoStats {
@@ -20,48 +19,29 @@ const Footer = async () => {
         (await repoStats.json()) as RepoStats;
 
     return (
-        <footer className="text-center pb-5" id="contact">
-            <div className="container">
-                <p className="text-lg">Have a project in mind?</p>
+        <footer
+            className="border-t border-border/40 py-6 text-sm text-muted-foreground"
+            id="footer"
+        >
+            <div className="container flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p>© {new Date().getFullYear()} Haider Ali. All rights reserved.</p>
+
                 <a
-                    href={`mailto:${GENERAL_INFO.email}`}
-                    className="text-lg sm:text-3xl md:text-4xl font-anton inline-block mt-5 mb-10 hover:underline break-all"
+                    href="https://github.com/Chuck672991"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 hover:text-foreground transition-colors duration-200"
                 >
-                    {GENERAL_INFO.email}
+                    <span className="flex items-center gap-1.5">
+                        <Star size={13} />
+                        {stargazers_count}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                        <GitFork size={13} />
+                        {forks_count}
+                    </span>
+                    <span>Design &amp; built by Haider Ali</span>
                 </a>
-
-                <div className="">
-                    <a
-                        href="https://github.com/Chuck672991"
-                        target="_blank"
-                        className="leading-none text-muted-foreground hover:underline hover:text-white"
-                    >
-                        Design & built by Haider Ali
-                        <div className="flex items-center justify-center gap-5 pt-1">
-                            <span className="flex items-center gap-2">
-                                <Star size={18} /> {stargazers_count}
-                            </span>
-                            <span className="flex items-center gap-2">
-                                <GitFork size={18} /> {forks_count}
-                            </span>
-                        </div>
-                    </a>
-
-                    {/* Note: If you are not Haider, use this copyright message instead */}
-                    {/* <a href='https://www.me.toinfinite.dev/' className="leading-none text-muted-foreground hover:underline hover:text-white">
-                        Design & built by Haider Ali <br />
-                        Revised by YOUR NAME
-
-                        <div className="flex items-center justify-center gap-5 pt-1">
-                            <span className='flex items-center gap-2'>
-                                <Star size={14} /> {stargazers_count}
-                            </span>
-                            <span className='flex items-center gap-2'>
-                                <GitFork size={14} /> {forks_count}
-                            </span>
-                        </div>
-                    </a> */}
-                </div>
             </div>
         </footer>
     );

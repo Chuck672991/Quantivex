@@ -6,6 +6,12 @@ import React from 'react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
+const METRICS = [
+    { value: '6+', label: 'App Store & Play Store Apps' },
+    { value: '3', label: 'AI-Powered Projects Shipped' },
+    { value: '5+', label: 'Industries Served' },
+];
+
 const AboutMe = () => {
     const container = React.useRef<HTMLDivElement>(null);
 
@@ -20,7 +26,6 @@ const AboutMe = () => {
                     scrub: 0.5,
                 },
             });
-
             tl.from('.slide-up-and-fade', {
                 y: 150,
                 opacity: 0,
@@ -41,7 +46,6 @@ const AboutMe = () => {
                     scrub: 0.5,
                 },
             });
-
             tl.to('.slide-up-and-fade', {
                 y: -150,
                 opacity: 0,
@@ -88,6 +92,23 @@ const AboutMe = () => {
                             </p>
                         </div>
                     </div>
+                </div>
+
+                {/* Key metrics strip */}
+                <div className="slide-up-and-fade mt-16 grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border border border-border">
+                    {METRICS.map((item) => (
+                        <div
+                            key={item.label}
+                            className="px-8 py-7 text-center group hover:bg-primary/5 transition-colors duration-300"
+                        >
+                            <p className="text-4xl font-anton text-primary mb-2 group-hover:scale-105 transition-transform duration-300">
+                                {item.value}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                {item.label}
+                            </p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>
