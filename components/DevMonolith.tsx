@@ -2,7 +2,7 @@
 
 import { Environment, Float, MeshTransmissionMaterial, Text } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 // ─── Per-slab configuration ────────────────────────────────────────────────
@@ -102,11 +102,11 @@ function GlassSlab({ label, sublabel, y, delay, speed, rotZ, rotX }: SlabConfig)
                 <Text
                     position={[0, 0.09, 0.09]}
                     fontSize={0.115}
-                    color="#243010"
+                    color="#f8f8f2"
                     letterSpacing={0.2}
                     anchorX="center"
                     anchorY="middle"
-                    // uses Roboto SDF (bundled with drei) — no remote fetch needed
+                // uses Roboto SDF (bundled with drei) — no remote fetch needed
                 >
                     {label}
                 </Text>
@@ -115,11 +115,11 @@ function GlassSlab({ label, sublabel, y, delay, speed, rotZ, rotX }: SlabConfig)
                 <Text
                     position={[0, -0.1, 0.09]}
                     fontSize={0.062}
-                    color="#3d5520"
+                    color="#d9e7b8"
                     letterSpacing={0.07}
                     anchorX="center"
                     anchorY="middle"
-                    fillOpacity={0.75}
+                    fillOpacity={0.85}
                 >
                     {sublabel}
                 </Text>
@@ -204,9 +204,11 @@ export default function DevMonolith() {
             dpr={[1, 2]}
             camera={{ position: [0, 0, 5.4], fov: 40 }}
             gl={{ antialias: true, alpha: true }}
-            style={{ background: 'transparent' }}
+            style={{ width: '100%', height: '100%', background: 'transparent' }}
         >
-            <Scene />
+            <Suspense fallback={null}>
+                <Scene />
+            </Suspense>
         </Canvas>
     );
 }
