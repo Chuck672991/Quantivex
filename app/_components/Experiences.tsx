@@ -65,7 +65,13 @@ const Experiences = () => {
     return (
         <section className="py-24 max-md:py-16 overflow-hidden bg-[#f3f4ee]" id="my-experience" ref={containerRef}>
             <div className="container px-4 mx-auto">
-                <SectionTitle title="My Experience" />
+                <SectionTitle
+                    title="My Experience"
+                    classNames={{
+                        title: 'text-2xl sm:text-3xl font-semibold tracking-[0.28em] text-slate-900',
+                        container: 'gap-3 mb-12',
+                    }}
+                />
 
                 <div className="relative mt-20 max-w-6xl mx-auto" ref={scrollRef}>
 
@@ -104,10 +110,10 @@ const Experiences = () => {
 
                                 {/* 3. Content Column */}
                                 <div className="md:pl-10">
-                                    <p className="text-sm font-bold text-primary tracking-widest uppercase mb-2 opacity-80">
+                                    <p className="text-sm font-semibold tracking-[0.24em] uppercase mb-2 opacity-90 text-slate-600">
                                         {item.company}
                                     </p>
-                                    <h3 className="text-4xl sm:text-5xl md:text-6xl font-anton uppercase leading-[0.9] text-black tracking-tight">
+                                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold uppercase leading-tight text-slate-950 tracking-tight">
                                         {item.title}
                                     </h3>
                                 </div>
