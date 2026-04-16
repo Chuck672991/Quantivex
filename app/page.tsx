@@ -30,7 +30,9 @@ export default function Home() {
             <Experiences />
 
             {/* 7. Testimonials — social proof */}
+            {/*
             <Testimonials />
+            */}
 
             {/* 8. Projects — the work itself */}
             <ProjectList />
