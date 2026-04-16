@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { MoveUpRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
+import ThemeToggle from './ThemeToggle';
 
 const COLORS = [
     'bg-yellow-500 text-black',
@@ -151,6 +152,9 @@ const Navbar = () => {
                     <a href={`mailto:${GENERAL_INFO.email}`}>
                         {GENERAL_INFO.email}
                     </a>
+                    <div className="mt-6">
+                        <ThemeToggle />
+                    </div>
                 </div>
             </div>
         </>

@@ -6,17 +6,27 @@ interface RepoStats {
 }
 
 const Footer = async () => {
-    const repoStats = await fetch(
-        'https://api.github.com/repos/Chuck672991',
-        {
-            next: {
-                revalidate: 60 * 60, // 1 hour
-            },
-        },
-    );
+    let stargazers_count = 0;
+    let forks_count = 0;
 
-    const { stargazers_count, forks_count } =
-        (await repoStats.json()) as RepoStats;
+    try {
+        const repoStats = await fetch(
+            'https://api.github.com/repos/Chuck672991/Portfolio-v2',
+            {
+                next: {
+                    revalidate: 60 * 60, // 1 hour
+                },
+            },
+        );
+
+        if (repoStats.ok) {
+            const data = (await repoStats.json()) as RepoStats;
+            stargazers_count = data.stargazers_count ?? 0;
+            forks_count = data.forks_count ?? 0;
+        }
+    } catch {
+        // Build/offline: keep zeros
+    }
 
     return (
         <footer

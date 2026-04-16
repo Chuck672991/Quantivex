@@ -29,3 +29,13 @@ export interface IProject {
     sourceCode?: string;
     hidden?: boolean;
 }
+
+export interface ITestimonial {
+    name: string;
+    title: string;
+    company?: string;
+    quote: string;
+    avatar?: string; // public/ path
+    relatedProjectSlug?: string;
+    url?: string;
+}

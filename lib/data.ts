@@ -1,4 +1,4 @@
-import { IProject } from '@/types';
+import { IProject, ITestimonial } from '@/types';
 
 export const GENERAL_INFO = {
     email: 'ha33217@gmail.com',
@@ -489,5 +489,39 @@ export const MY_EXPERIENCE = [
         title: 'Frontend Developer',
         company: 'Freelance',
         duration: 'Mar 2021 - Jan 2023',
+    },
+];
+
+export const TESTIMONIALS: ITestimonial[] = [
+    {
+        name: 'Client Name',
+        title: 'Founder / Product Owner',
+        company: 'Company',
+        quote: 'Haider delivered end-to-end with excellent communication and top-tier execution. The product shipped on time and exceeded expectations.',
+        avatar: '/testimonials/avatar-1.png',
+        relatedProjectSlug: 'mwi-ai',
+    },
+    {
+        name: 'Engineering Manager',
+        title: 'Tech Lead',
+        company: 'Studio / Agency',
+        quote: 'Strong ownership mindset. He kept quality high, moved fast, and handled complex integrations (AI + mobile + backend) with confidence.',
+        avatar: '/testimonials/avatar-2.png',
+        relatedProjectSlug: 'quality-boat-salvage',
+    },
+    {
+        name: 'Operations Lead',
+        title: 'Operations',
+        company: 'Logistics',
+        quote: 'The app improved our workflow immediately. The real-time features were solid, and the UI feels premium on both iOS and Android.',
+        avatar: '/testimonials/avatar-3.png',
+        relatedProjectSlug: 'eagle-iot',
+    },
+    {
+        name: 'Startup Founder',
+        title: 'CEO',
+        quote: 'Great attention to detail and performance. He thinks in systems, not just screens, and his delivery is consistently reliable.',
+        avatar: '/testimonials/avatar-4.png',
+        relatedProjectSlug: 'cosmetic-chemist',
     },
 ];

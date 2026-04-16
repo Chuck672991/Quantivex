@@ -5,6 +5,7 @@ import Experiences from './_components/Experiences';
 import ProjectList from './_components/ProjectList';
 import Services from './_components/Services';
 import Skills from './_components/Skills';
+import Testimonials from './_components/Testimonials';
 import Marquee from '@/components/Marquee';
 
 export default function Home() {
@@ -28,10 +29,13 @@ export default function Home() {
             {/* 6. Experience — credibility timeline */}
             <Experiences />
 
-            {/* 7. Projects — the work itself */}
+            {/* 7. Testimonials — social proof */}
+            <Testimonials />
+
+            {/* 8. Projects — the work itself */}
             <ProjectList />
 
-            {/* 8. Contact — close with a CTA */}
+            {/* 9. Contact — close with a CTA */}
             <Contact />
         </div>
     );

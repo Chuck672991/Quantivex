@@ -34,7 +34,18 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
         return notFound();
     }
 
-    return <ProjectDetails project={project} />;
+    const idx = PROJECTS.findIndex((p) => p.slug === slug);
+    const prev = idx > 0 ? PROJECTS[idx - 1] : null;
+    const next = idx < PROJECTS.length - 1 ? PROJECTS[idx + 1] : null;
+
+    return (
+        <ProjectDetails
+            project={project}
+            prevProject={prev}
+            nextProject={next}
+            moreProjects={PROJECTS.filter((p) => p.slug !== slug).slice(0, 3)}
+        />
+    );
 };
 
 export default Page;

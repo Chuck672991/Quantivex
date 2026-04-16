@@ -6,16 +6,19 @@ import { IProject } from '@/types';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
-import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ExternalLink, Github } from 'lucide-react';
 import { useRef } from 'react';
 
 interface Props {
     project: IProject;
+    prevProject: IProject | null;
+    nextProject: IProject | null;
+    moreProjects: IProject[];
 }
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-const ProjectDetails = ({ project }: Props) => {
+const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Props) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useGSAP(
@@ -198,6 +201,75 @@ const ProjectDetails = ({ project }: Props) => {
                         </div>
                     ))}
                 </div>
+
+                <div className="fade-in-later max-w-[900px] mx-auto mt-14 border border-border">
+                    <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
+                        <div className="p-7 md:p-10">
+                            <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mb-3">
+                                Previous
+                            </p>
+                            {prevProject ? (
+                                <TransitionLink
+                                    href={`/projects/${prevProject.slug}`}
+                                    className="group inline-flex items-center justify-between gap-6 w-full"
+                                >
+                                    <span className="text-xl sm:text-2xl font-anton leading-tight group-hover:text-primary transition-colors">
+                                        {prevProject.title}
+                                    </span>
+                                    <ArrowLeft className="shrink-0 opacity-60 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
+                                </TransitionLink>
+                            ) : (
+                                <p className="text-muted-foreground">This is the first project.</p>
+                            )}
+                        </div>
+
+                        <div className="p-7 md:p-10">
+                            <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mb-3">
+                                Next
+                            </p>
+                            {nextProject ? (
+                                <TransitionLink
+                                    href={`/projects/${nextProject.slug}`}
+                                    className="group inline-flex items-center justify-between gap-6 w-full"
+                                >
+                                    <span className="text-xl sm:text-2xl font-anton leading-tight group-hover:text-primary transition-colors">
+                                        {nextProject.title}
+                                    </span>
+                                    <ArrowRight className="shrink-0 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                                </TransitionLink>
+                            ) : (
+                                <p className="text-muted-foreground">This is the latest project.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {moreProjects.length > 0 && (
+                    <div className="fade-in-later max-w-[900px] mx-auto mt-14">
+                        <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mb-5">
+                            More projects
+                        </p>
+                        <div className="grid md:grid-cols-3 gap-3">
+                            {moreProjects.map((p) => (
+                                <TransitionLink
+                                    key={p.slug}
+                                    href={`/projects/${p.slug}`}
+                                    className="group border border-border bg-background hover:bg-primary/5 transition-colors p-6"
+                                >
+                                    <p className="text-sm text-muted-foreground mb-2">
+                                        {p.year}
+                                    </p>
+                                    <p className="font-anton text-xl leading-tight group-hover:text-primary transition-colors">
+                                        {p.title}
+                                    </p>
+                                    <p className="mt-3 text-xs text-muted-foreground">
+                                        {p.techStack.slice(0, 3).join(' · ')}
+                                    </p>
+                                </TransitionLink>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );
