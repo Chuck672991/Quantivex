@@ -11,6 +11,7 @@ const COLORS = [
     'bg-blue-500 text-white',
     'bg-teal-500 text-black',
     'bg-indigo-500 text-white',
+    'bg-emerald-500 text-white',
 ];
 
 const MENU_LINKS = [
@@ -25,6 +26,10 @@ const MENU_LINKS = [
     {
         name: 'Experience',
         url: '/#my-experience',
+    },
+    {
+        name: 'Mobile Apps',
+        url: '/mobile-applications',
     },
     {
         name: 'Projects',
