@@ -50,15 +50,15 @@ export const PROJECTS_DATA: IMobileProject[] = [
       "Encrypted report export to PDF and CSV with secure digital keys"
     ],
     screenshots: [
-      "/projects/images/mwi-ai-1.png",
-      "/projects/images/mwi-ai-2.png",
-      "/projects/images/mwi-ai-3.png",
-      "/projects/mobileApps/image.png"
+      "/projects/mobileApps/MwiAi1.png",
+      "/projects/mobileApps/MwiAi2.png",
+      "/projects/mobileApps/MwiAi3.png",
+      "/projects/mobileApps/MwiAi4.png"
     ]
   },
   {
     id: 3,
-    title: "Quality Boat Salvage (QBS)",
+    title: "BoatDNA",
     shortPitch: "Logistics tracking and subscription platform for boat salvage operations.",
     description: "A comprehensive maritime commerce and tracking system. Provides users with detailed parts search, subscription access tiers, and live tracking of shipments and boat parts orders directly on Google Maps.",
     appStoreUrl: "https://apps.apple.com",
@@ -72,10 +72,10 @@ export const PROJECTS_DATA: IMobileProject[] = [
       "FCM notifications alerting customers to transit checkpoints"
     ],
     screenshots: [
-      "/projects/images/qbs-1.png",
-      "/projects/mobileApps/JulianCouriers1.png",
-      "/projects/mobileApps/JulianCouriers2.png",
-      "/projects/mobileApps/JulianCouriers3.png"
+      "/projects/mobileApps/Qbs1.png",
+      "/projects/mobileApps/Qbs2.png",
+      "/projects/mobileApps/Qbs3.png",
+      "/projects/mobileApps/Qbs4.png"
     ]
   },
   {
@@ -94,10 +94,10 @@ export const PROJECTS_DATA: IMobileProject[] = [
       "Interactive historical trip playback with speed graphs"
     ],
     screenshots: [
-      "/projects/thumbnail/eagle-iot.png",
-      "/projects/mobileApps/JulianCouriers4.png",
-      "/projects/mobileApps/JulianCouriers2.png",
-      "/projects/mobileApps/JulianCouriers3.png"
+      "/projects/mobileApps/Iot1.png",
+      "/projects/mobileApps/Iot2.png",
+      "/projects/mobileApps/iot3.png",
+      "/projects/mobileApps/Iot4.png"
     ]
   }
 ];
