@@ -1,4 +1,4 @@
-import { IProject, ITestimonial } from '@/types';
+import { IProject, IStackGroup, ITestimonial } from '@/types';
 
 export const GENERAL_INFO = {
     email: 'ha33217@gmail.com',
@@ -17,108 +17,108 @@ export const SOCIAL_LINKS = [
     // { name: 'facebook', url: 'https://www.facebook.com/Haider.2000' },
 ];
 
-export const MY_STACK = {
-    frontend: [
-        {
-            name: 'Javascript',
-            icon: '/logo/js.png',
-        },
-        {
-            name: 'Typescript',
-            icon: '/logo/ts.png',
-        },
-        {
-            name: 'React',
-            icon: '/logo/react.png',
-        },
-        {
-            name: 'Next.js',
-            icon: '/logo/next.png',
-        },
-        {
-            name: 'React Native',
-            icon: '/logo/react.png',
-        },
-        {
-            name: 'Redux Toolkit',
-            icon: '/logo/redux.png',
-        },
-        {
-            name: 'Tailwind CSS',
-            icon: '/logo/tailwind.png',
-        },
-        {
-            name: 'Three.js',
-            icon: '/logo/js.png',
-        },
-        {
-            name: 'Framer Motion',
-            icon: '/logo/framer-motion.png',
-        },
-        {
-            name: 'GSAP',
-            icon: '/logo/gsap.png',
-        },
-        {
-            name: 'SASS',
-            icon: '/logo/sass.png',
-        },
-    ],
-    backend: [
-        {
-            name: 'Node.js',
-            icon: '/logo/node.png',
-        },
-        {
-            name: 'Fastify',
-            icon: '/logo/node.png',
-        },
-        {
-            name: 'Express.js',
-            icon: '/logo/express.png',
-        },
-        {
-            name: 'GraphQL',
-            icon: '/logo/node.png',
-        },
-    ],
-    database: [
-        {
-            name: 'MongoDB',
-            icon: '/logo/mongodb.svg',
-        },
-        {
-            name: 'Firebase',
-            icon: '/logo/mongodb.svg',
-        },
-        {
-            name: 'PostgreSQL',
-            icon: '/logo/postgreSQL.png',
-        },
-        {
-            name: 'Prisma',
-            icon: '/logo/prisma.png',
-        },
-    ],
-    tools: [
-        {
-            name: 'Git',
-            icon: '/logo/git.png',
-        },
-        {
-            name: 'Docker',
-            icon: '/logo/docker.svg',
-        },
-        {
-            name: 'AWS',
-            icon: '/logo/aws.png',
-        },
-        {
-            name: 'OpenAI API',
-            icon: '/logo/js.png',
-        },
-    ],
-};
+// Source of truth: HaiderAli_CV.md → SKILLS. Group names and ordering follow
+// the CV (AI first, matching the "AI & Full-Stack Software Engineer" title).
+// Items with a logo in /public/logo use it; everything else gets a glyph.
+export const MY_STACK: IStackGroup[] = [
+    {
+        key: 'ai',
+        label: 'AI & Agentic Systems',
+        ai: true,
+        items: [
+            { name: 'LLM Agents', glyph: 'bot' },
+            { name: 'Tool / Function Calling', glyph: 'wrench' },
+            { name: 'MCP', detail: 'Model Context Protocol', glyph: 'cable' },
+            { name: 'RAG & Context Engineering', glyph: 'layers' },
+            { name: 'Intent Classification', glyph: 'route' },
+            { name: 'Structured Outputs', glyph: 'braces' },
+            { name: 'Prompt Engineering', glyph: 'terminal' },
+            { name: 'Human-in-the-Loop Confirmation', glyph: 'user-check' },
+            { name: 'Output Validation & Guardrails', glyph: 'shield' },
+        ],
+    },
+    {
+        key: 'llm',
+        label: 'LLM APIs & SDKs',
+        ai: true,
+        items: [
+            { name: 'OpenAI API', detail: 'GPT-4', glyph: 'brain' },
+            { name: 'Claude API', glyph: 'sparkles' },
+            { name: 'Whisper API', detail: 'Speech-to-Text', glyph: 'mic' },
+            { name: 'Vercel AI SDK', glyph: 'triangle' },
+        ],
+    },
+    {
+        key: 'automation',
+        label: 'Automation',
+        ai: true,
+        items: [
+            {
+                name: 'n8n',
+                detail: 'AI Agent nodes · Webhooks · MCP Client Tool · HTTP integrations',
+                glyph: 'workflow',
+            },
+            {
+                name: 'Async Workflow Callbacks',
+                detail: 'HMAC-verified',
+                glyph: 'webhook',
+            },
+            { name: 'Supabase Realtime', glyph: 'radio' },
+        ],
+    },
+    {
+        key: 'languages',
+        label: 'Languages & Frameworks',
+        items: [
+            { name: 'JavaScript', detail: 'ES6+', icon: '/logo/js.png' },
+            { name: 'TypeScript', icon: '/logo/ts.png' },
+            { name: 'React.js', icon: '/logo/react.png' },
+            { name: 'Next.js', icon: '/logo/next.png' },
+            { name: 'React Native', icon: '/logo/react.png' },
+            { name: 'Node.js', icon: '/logo/node.png' },
+            { name: 'NestJS', icon: '/logo/nest.svg' },
+            { name: 'Fastify', glyph: 'zap' },
+            // Not in the CV skills list; listed in the Freelance experience bullet.
+            { name: 'Three.js', glyph: 'box' },
+        ],
+    },
+    {
+        key: 'backend',
+        label: 'Backend & Database',
+        items: [
+            {
+                name: 'MongoDB',
+                detail: 'Aggregation Pipelines',
+                icon: '/logo/mongodb.svg',
+            },
+            { name: 'PostgreSQL / Supabase', icon: '/logo/postgreSQL.png' },
+            { name: 'Prisma', icon: '/logo/prisma.png' },
+            { name: 'Firebase', glyph: 'flame' },
+            { name: 'WebSockets', glyph: 'plug' },
+            { name: 'REST APIs', glyph: 'globe' },
+            { name: 'GraphQL', glyph: 'network' },
+        ],
+    },
+    {
+        key: 'cloud',
+        label: 'Cloud & DevOps',
+        items: [
+            { name: 'AWS', detail: 'EC2 · Linux · PM2', icon: '/logo/aws.png' },
+            { name: 'CI/CD Pipelines', glyph: 'git-branch' },
+            { name: 'App Store / Play Store Deployment', glyph: 'rocket' },
+        ],
+    },
+    {
+        key: 'mobile',
+        label: 'Mobile & Integrations',
+        items: [
+            { name: 'RevenueCat', detail: 'Subscriptions', glyph: 'credit-card' },
+            { name: 'Google Maps API', glyph: 'map-pin' },
+            { name: 'FCM', detail: 'Push notifications', glyph: 'bell' },
+            { name: 'PubNub', glyph: 'messages' },
+        ],
+    },
+];
 
 export const PROJECTS: IProject[] = [
     {

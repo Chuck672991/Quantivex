@@ -1,4 +1,5 @@
 import AboutMe from './_components/AboutMe';
+import AISection from './_components/AISection';
 import Banner from './_components/Banner';
 import Contact from './_components/Contact';
 import Experiences from './_components/Experiences';
@@ -36,6 +37,10 @@ export default function Home() {
 
             {/* 8. Projects — the work itself */}
             <ProjectList />
+
+            {/* 8b. AI — sits directly under the project showcase (mobile first,
+                then web, then this) and leads into /ai-projects */}
+            <AISection />
 
             {/* 9. Contact — close with a CTA */}
             <Contact />

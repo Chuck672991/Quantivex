@@ -1,20 +1,13 @@
 'use client';
 import SectionTitle from '@/components/SectionTitle';
+import StackIcon from '@/components/StackIcon';
 import { MY_STACK } from '@/lib/data';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
-import Image from 'next/image';
 import { useRef } from 'react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
-
-const CATEGORY_LABELS: Record<string, string> = {
-    frontend: 'Frontend & UI',
-    backend: 'Backend',
-    database: 'Databases',
-    tools: 'Tools & DevOps',
-};
 
 const Skills = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -67,39 +60,47 @@ const Skills = () => {
             <div className="container">
                 <SectionTitle title="My Stack" />
 
-                <div className="space-y-12 md:space-y-20">
-                    {Object.entries(MY_STACK).map(([key, value]) => (
+                <div className="space-y-12 md:space-y-16">
+                    {MY_STACK.map((group) => (
                         <div
                             className="grid sm:grid-cols-12 gap-4 sm:gap-0"
-                            key={key}
+                            key={group.key}
                         >
-                            <div className="sm:col-span-5">
+                            <div className="sm:col-span-5 sm:pr-8">
                                 <p className="slide-up text-3xl sm:text-4xl md:text-5xl font-anton leading-none text-muted-foreground uppercase">
-                                    {CATEGORY_LABELS[key] ?? key}
+                                    {group.label}
                                 </p>
+                                {group.ai && (
+                                    <span className="slide-up mt-3 inline-block rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-primary">
+                                        AI
+                                    </span>
+                                )}
                             </div>
 
-                            <div className="sm:col-span-7 flex gap-x-8 gap-y-7 flex-wrap">
-                                {value.map((item) => (
-                                    <div
-                                        className="slide-up group flex gap-2.5 items-center leading-none hover:text-primary transition-colors duration-200"
+                            <ul className="sm:col-span-7 flex gap-x-8 gap-y-6 flex-wrap">
+                                {group.items.map((item) => (
+                                    <li
+                                        className="slide-up group flex gap-2.5 items-center hover:text-primary transition-colors duration-200"
                                         key={item.name}
                                     >
-                                        <div>
-                                            <Image
-                                                src={item.icon}
-                                                alt={item.name}
-                                                width={32}
-                                                height={32}
-                                                className="max-h-8 w-8 group-hover:scale-110 transition-transform duration-200"
-                                            />
+                                        <StackIcon
+                                            item={item}
+                                            size={32}
+                                            className="group-hover:scale-110 transition-transform duration-200"
+                                        />
+                                        <div className="leading-tight">
+                                            <span className="block text-lg sm:text-xl">
+                                                {item.name}
+                                            </span>
+                                            {item.detail && (
+                                                <span className="mt-1 block max-w-[300px] text-xs text-muted-foreground">
+                                                    {item.detail}
+                                                </span>
+                                            )}
                                         </div>
-                                        <span className="text-lg sm:text-2xl capitalize">
-                                            {item.name}
-                                        </span>
-                                    </div>
+                                    </li>
                                 ))}
-                            </div>
+                            </ul>
                         </div>
                     ))}
                 </div>

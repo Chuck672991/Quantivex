@@ -151,3 +151,70 @@
 .service-top-line {
     transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
+
+/* ─── AI robot mount (components/AiRobot.jsx) ─────────────── */
+/* The component carries the class name it was written with. All it needs is
+   a sized box; it never takes pointer input (it tracks the cursor on window). */
+.login-robot {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.login-robot canvas {
+    display: block;
+}
+
+/* ─── AI section + /ai-projects ───────────────────────────── */
+@keyframes ai-spin {
+    to { transform: rotate(360deg); }
+}
+
+.ai-spin {
+    animation: ai-spin 70s linear infinite;
+}
+
+.ai-spin-reverse {
+    animation: ai-spin 110s linear infinite reverse;
+}
+
+/* A signal travelling along a flow connector. --ai-i staggers neighbouring
+   connectors so the pulse reads as moving down the chain. */
+@keyframes ai-pulse-x {
+    0%   { transform: translateX(-100%); opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateX(400%); opacity: 0; }
+}
+
+@keyframes ai-pulse-y {
+    0%   { transform: translateY(-100%); opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(400%); opacity: 0; }
+}
+
+.ai-pulse-x {
+    animation: ai-pulse-x 2.4s ease-in-out infinite;
+    animation-delay: calc(var(--ai-i, 0) * 0.5s);
+}
+
+.ai-pulse-y {
+    animation: ai-pulse-y 2.4s ease-in-out infinite;
+    animation-delay: calc(var(--ai-i, 0) * 0.5s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ai-spin,
+    .ai-spin-reverse {
+        animation: none;
+    }
+
+    .ai-pulse-x,
+    .ai-pulse-y {
+        animation: none;
+        opacity: 0;
+    }
+}

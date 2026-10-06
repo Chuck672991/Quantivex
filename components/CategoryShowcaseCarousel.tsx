@@ -615,7 +615,7 @@ export default function CategoryShowcaseCarousel() {
             {category.type === 'mobile'
               ? 'iOS · Android'
               : category.type === 'ai'
-                ? 'GPT-4 · Whisper'
+                ? 'LLM · MCP · RAG'
                 : 'React · Next.js'}
           </span>
         </div>
