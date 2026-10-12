@@ -37,7 +37,7 @@ export default function AnimatedHeading({
           hidden: { opacity: 0, y: 10 },
           visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 20 } },
         }}
-        className="inline-block text-xs font-semibold tracking-widest text-primary uppercase bg-primary/10 border border-primary/20 px-3 py-1 rounded-full"
+        className="inline-block font-mono text-[11px] font-medium tracking-[0.2em] text-primary uppercase bg-primary/10 border border-primary/20 px-3 py-1 rounded-full"
       >
         Mobile Application
       </motion.span>
@@ -52,7 +52,7 @@ export default function AnimatedHeading({
             transition: { type: 'spring', stiffness: 150, damping: 20 },
           },
         }}
-        className="text-4xl xs:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground font-anton uppercase"
+        className="text-balance font-display text-[clamp(2rem,5.2vw,3.5rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-foreground"
       >
         {title}
       </motion.h2>
@@ -67,7 +67,7 @@ export default function AnimatedHeading({
             transition: { type: 'spring', stiffness: 150, damping: 22 },
           },
         }}
-        className="text-lg xs:text-xl md:text-2xl font-medium text-gradient font-sans leading-snug"
+        className="text-lg md:text-xl font-medium text-gradient font-sans leading-snug"
       >
         {shortPitch}
       </motion.p>

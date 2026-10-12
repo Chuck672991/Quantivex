@@ -1,6 +1,7 @@
 'use client';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
-import { useReducedMotion, useSpring } from 'framer-motion';
+import { useSpring } from 'framer-motion';
 import type { PointerEvent } from 'react';
 
 const SPRING = { stiffness: 120, damping: 18, mass: 0.5 };

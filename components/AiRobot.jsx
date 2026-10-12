@@ -22,7 +22,9 @@ export default function AiRobot() {
     camera.position.set(0, 0.6, 9.6);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Quality tier (lib/perf.ts): 0 full, 1 reduced, 2 minimal
+    const tier = Number(document.documentElement.dataset.perf || 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, [1.5, 1.25, 1][tier] ?? 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     mount.appendChild(renderer.domElement);
 
@@ -182,7 +184,7 @@ export default function AiRobot() {
     // that way naturally instead of snapping to a hard, frozen stare —
     // which is what the old off-canvas math produced.
     const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-    // Portfolio: reduced-motion visitors get one static, well-posed frame
+    // Reduced-motion visitors get one static, well-posed frame
     // (t = 1.5 sits between blinks and waves) and no pointer tracking.
     const reduceMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
     const pointer = { x: 0, y: 0 };
@@ -246,8 +248,13 @@ export default function AiRobot() {
       renderer.render(scene, camera);
     };
 
-    const animate = () => {
+    // Weaker tiers draw at ~30fps
+    const minGap = tier >= 1 ? 30 : 0;
+    let lastDraw = 0;
+    const animate = (now) => {
       raf = requestAnimationFrame(animate);
+      if (minGap && now - lastDraw < minGap) return;
+      lastDraw = now;
       draw();
     };
     const start = () => {

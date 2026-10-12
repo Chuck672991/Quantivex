@@ -1,7 +1,8 @@
 'use client';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
 import type { IAIProject } from '@/lib/aiData';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ink } from './accent';
 
 interface Props {
@@ -55,17 +56,17 @@ const AIProjectDetails = ({ project, open, panelId }: Props) => {
                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     className="overflow-hidden"
                 >
-                    <div className="mt-8 grid gap-7 border-t border-white/10 pt-8 sm:grid-cols-2">
+                    <div className="mt-8 grid gap-7 border-t border-border pt-8 sm:grid-cols-2">
                         {project.problem && (
                             <Block label="The problem" accent={accent} className={pairSpan}>
-                                <p className="max-w-[68ch] text-sm leading-relaxed text-white/65">
+                                <p className="max-w-[68ch] text-sm leading-relaxed text-foreground/80">
                                     {project.problem}
                                 </p>
                             </Block>
                         )}
                         {project.solution && (
                             <Block label="The approach" accent={accent} className={pairSpan}>
-                                <p className="max-w-[68ch] text-sm leading-relaxed text-white/65">
+                                <p className="max-w-[68ch] text-sm leading-relaxed text-foreground/80">
                                     {project.solution}
                                 </p>
                             </Block>
@@ -77,7 +78,7 @@ const AIProjectDetails = ({ project, open, panelId }: Props) => {
                                     {project.highlights.map((h) => (
                                         <li
                                             key={h}
-                                            className="flex gap-3 text-sm leading-relaxed text-white/65"
+                                            className="flex gap-3 text-sm leading-relaxed text-foreground/80"
                                         >
                                             <span
                                                 aria-hidden
@@ -96,7 +97,7 @@ const AIProjectDetails = ({ project, open, panelId }: Props) => {
                         {project.outcome && (
                             <div className="sm:col-span-2">
                                 <Block label="Outcome" accent={accent}>
-                                    <p className="text-sm leading-relaxed text-white/80">
+                                    <p className="text-sm leading-relaxed text-foreground/80">
                                         {project.outcome}
                                     </p>
                                 </Block>
@@ -104,7 +105,7 @@ const AIProjectDetails = ({ project, open, panelId }: Props) => {
                         )}
 
                         {project.context && (
-                            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35 sm:col-span-2">
+                            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:col-span-2">
                                 {project.context}
                             </p>
                         )}

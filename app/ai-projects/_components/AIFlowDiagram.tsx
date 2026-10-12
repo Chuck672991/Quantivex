@@ -1,13 +1,11 @@
 'use client';
+import { useAnimGate } from '@/lib/useAnimGate';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
-import type {
-    AIFlowKind,
-    IAIFlowBranch,
-    IAIFlowStep,
-} from '@/lib/aiData';
+import type { AIFlowKind, IAIFlowBranch, IAIFlowStep } from '@/lib/aiData';
 import { cn } from '@/lib/utils';
 import { ink, rgb } from './accent';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     Database,
     Inbox,
@@ -17,7 +15,7 @@ import {
     Wrench,
     type LucideIcon,
 } from 'lucide-react';
-import type { CSSProperties } from 'react';
+import { useRef, type CSSProperties } from 'react';
 
 const KIND: Record<AIFlowKind, { label: string; Icon: LucideIcon }> = {
     input: { label: 'Input', Icon: Inbox },
@@ -38,11 +36,13 @@ interface Props {
     compact?: boolean;
 }
 
-
 /** Visual weight by role: models are filled, guardrails dashed. */
 const nodeStyle = (kind: AIFlowKind, accent: string): CSSProperties => {
     if (kind === 'model')
-        return { background: rgb(accent, 0.12), borderColor: rgb(accent, 0.45) };
+        return {
+            background: rgb(accent, 0.12),
+            borderColor: rgb(accent, 0.45),
+        };
     if (kind === 'guard')
         return { borderColor: rgb(accent, 0.4), borderStyle: 'dashed' };
     return {};
@@ -58,21 +58,21 @@ const Branch = ({
     const { Icon } = KIND[branch.kind];
     return (
         <div
-            className="rounded-lg border border-white/10 bg-white/[0.02] p-2.5"
+            className="rounded-lg border border-border bg-foreground/[0.02] p-2.5"
             style={nodeStyle(branch.kind, accent)}
         >
             <p
-                className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.2em]"
+                className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em]"
                 style={{ color: ink(accent) }}
             >
                 <Icon size={10} />
                 {branch.tag}
             </p>
-            <p className="mt-1.5 text-xs font-medium text-white">
+            <p className="mt-1.5 text-xs font-medium text-foreground">
                 {branch.label}
             </p>
             {branch.detail && (
-                <p className="mt-0.5 text-[11px] leading-snug text-white/45">
+                <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
                     {branch.detail}
                 </p>
             )}
@@ -95,11 +95,15 @@ const Rail = ({
     const signal = (axis: 'x' | 'y') => ({
         className: cn(
             'absolute left-0 top-0',
-            axis === 'y' ? 'ai-pulse-y h-1/4 w-full' : 'ai-pulse-x h-full w-1/4',
+            axis === 'y'
+                ? 'ai-pulse-y h-1/4 w-full'
+                : 'ai-pulse-x h-full w-1/4',
         ),
         style: {
             '--ai-i': index,
-            background: `linear-gradient(${axis === 'y' ? 'to bottom' : 'to right'}, transparent, ${rgb(accent)}, transparent)`,
+            background: `linear-gradient(${
+                axis === 'y' ? 'to bottom' : 'to right'
+            }, transparent, ${rgb(accent)}, transparent)`,
         } as CSSProperties,
     });
 
@@ -107,9 +111,7 @@ const Rail = ({
         <div
             className={cn(
                 'flex shrink-0 items-center',
-                horizontal
-                    ? 'flex-col lg:w-full lg:flex-row'
-                    : 'flex-col',
+                horizontal ? 'flex-col lg:w-full lg:flex-row' : 'flex-col',
             )}
         >
             <span
@@ -124,7 +126,7 @@ const Rail = ({
                     <span
                         aria-hidden
                         className={cn(
-                            'relative my-1 w-px flex-1 overflow-hidden bg-white/10',
+                            'relative my-1 w-px flex-1 overflow-hidden bg-foreground/10',
                             horizontal && 'lg:hidden',
                         )}
                     >
@@ -134,7 +136,7 @@ const Rail = ({
                     {horizontal && (
                         <span
                             aria-hidden
-                            className="relative mx-1 hidden h-px flex-1 overflow-hidden bg-white/10 lg:block"
+                            className="relative mx-1 hidden h-px flex-1 overflow-hidden bg-foreground/10 lg:block"
                         >
                             <i {...signal('x')} />
                         </span>
@@ -151,11 +153,14 @@ const AIFlowDiagram = ({
     orientation,
     compact = false,
 }: Props) => {
-    const reduce = useReducedMotion() ?? false;
+    const reduce = useReducedMotion();
     const horizontal = orientation === 'horizontal';
+    const listRef = useRef<HTMLOListElement>(null);
+    useAnimGate(listRef);
 
     return (
         <ol
+            ref={listRef}
             className={cn(
                 horizontal
                     ? 'flex flex-col lg:grid lg:grid-flow-col lg:auto-cols-fr'
@@ -201,7 +206,7 @@ const AIFlowDiagram = ({
                         >
                             <div
                                 className={cn(
-                                    'rounded-xl border border-white/10 bg-white/[0.03] transition-[transform,border-color] duration-300 hover:-translate-y-0.5',
+                                    'rounded-xl border border-border bg-foreground/[0.03] transition-[transform,border-color] duration-300 hover:-translate-y-0.5',
                                     compact ? 'px-3 py-2' : 'p-3.5',
                                 )}
                                 style={nodeStyle(step.kind, accent)}
@@ -215,7 +220,7 @@ const AIFlowDiagram = ({
                                 </p>
                                 <p
                                     className={cn(
-                                        'font-semibold text-white',
+                                        'font-semibold text-foreground',
                                         compact
                                             ? 'mt-1 text-[13px]'
                                             : 'mt-2 text-sm',
@@ -224,7 +229,7 @@ const AIFlowDiagram = ({
                                     {step.label}
                                 </p>
                                 {!compact && step.detail && (
-                                    <p className="mt-1 text-xs leading-snug text-white/50">
+                                    <p className="mt-1 text-xs leading-snug text-muted-foreground">
                                         {step.detail}
                                     </p>
                                 )}

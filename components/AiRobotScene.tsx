@@ -50,10 +50,7 @@ const AiRobotScene = ({ className }: Props) => {
     useEffect(() => {
         const host = hostRef.current;
         if (!host) return;
-        if (typeof IntersectionObserver === 'undefined') {
-            setArmed(true);
-            return;
-        }
+        if (typeof IntersectionObserver === 'undefined') return;
 
         const io = new IntersectionObserver(
             ([entry]) => {

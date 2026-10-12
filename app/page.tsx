@@ -1,49 +1,39 @@
-import AboutMe from './_components/AboutMe';
-import AISection from './_components/AISection';
-import Banner from './_components/Banner';
-import Contact from './_components/Contact';
-import Experiences from './_components/Experiences';
-import ProjectList from './_components/ProjectList';
-import Services from './_components/Services';
-import Skills from './_components/Skills';
-import Testimonials from './_components/Testimonials';
 import Marquee from '@/components/Marquee';
+import { SCROLL } from '@/lib/scroll/config';
+import type { CSSProperties } from 'react';
+import './_components/acts.css';
+import AISection from './_components/AISection';
+import Capabilities from './_components/Capabilities';
+import Contact from './_components/Contact';
+import CTA from './_components/CTA';
+import Hero from './_components/Hero';
+import Intro from './_components/Intro';
+import Process from './_components/Process';
+import SelectedWork from './_components/SelectedWork';
+import Services from './_components/Services';
+import WhyUs from './_components/WhyUs';
+
+const RISE_STYLE = { '--op-handoff': SCROLL.handoff } as CSSProperties;
 
 export default function Home() {
     return (
-        <div className="page-">
-            {/* 1. Hero — first impression, available badge + animated counters */}
-            <Banner />
-
-            {/* 2. Tech ticker — immediate proof of breadth right below hero */}
-            <Marquee />
-
-            {/* 3. About — personal story + key metrics */}
-            <AboutMe />
-
-            {/* 4. Services — what you offer, drives intent */}
+        <>
+            {/* Pinned scroll opening: lockup, peephole zoom, the hero */}
+            <Hero />
+            {/* Rises over the pinned hero (hero.css: .op-rise) */}
+            <div className="op-rise" style={RISE_STYLE}>
+                <Marquee />
+                <Intro />
+            </div>
             <Services />
-
-            {/* 5. Stack — deep-dive into tools */}
-            <Skills />
-
-            {/* 6. Experience — credibility timeline */}
-            <Experiences />
-
-            {/* 7. Testimonials — social proof */}
-            {/*
-            <Testimonials />
-            */}
-
-            {/* 8. Projects — the work itself */}
-            <ProjectList />
-
-            {/* 8b. AI — sits directly under the project showcase (mobile first,
-                then web, then this) and leads into /ai-projects */}
+            {/* AI spotlight */}
             <AISection />
-
-            {/* 9. Contact — close with a CTA */}
+            <Capabilities />
+            <SelectedWork />
+            <Process />
+            <WhyUs />
+            <CTA />
             <Contact />
-        </div>
+        </>
     );
 }

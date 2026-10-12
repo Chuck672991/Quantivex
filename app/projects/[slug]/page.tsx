@@ -1,9 +1,21 @@
 import { notFound } from 'next/navigation';
 import ProjectDetails from './_components/ProjectDetails';
 import { PROJECTS as ALL_PROJECTS } from '@/lib/data';
+import { BRAND } from '@/lib/brand';
+import { Metadata } from 'next';
 
 const PROJECTS = ALL_PROJECTS.filter((p) => !p.hidden);
-import { Metadata } from 'next';
+
+/** Project descriptions are HTML snippets; the meta description must be plain text. */
+const toPlainText = (html: string, max = 155) => {
+    const text = html
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (text.length <= max) return text;
+    return `${text.slice(0, max).replace(/\s+\S*$/, '')}…`;
+};
 
 export const generateStaticParams = async () => {
     return PROJECTS.map((project) => ({ slug: project.slug }));
@@ -13,16 +25,21 @@ export const generateMetadata = async ({
     params,
 }: {
     params: Promise<{ slug: string }>;
-}) => {
+}): Promise<Metadata> => {
     const { slug } = await params;
     const project = PROJECTS.find((project) => project.slug === slug);
 
+    if (!project) return { title: { absolute: `Project not found | ${BRAND.name}` } };
+
+    const title = `${project.title} | ${BRAND.name}`;
+    const description = toPlainText(project.description);
+
     return {
-        title: `${project?.title} - ${project?.techStack
-            .slice(0, 3)
-            .join(', ')}`,
-        description: project?.description,
-    } as Metadata;
+        // absolute: the root layout's title template would otherwise append the brand twice
+        title: { absolute: title },
+        description,
+        openGraph: { title, description, type: 'website' },
+    };
 };
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {

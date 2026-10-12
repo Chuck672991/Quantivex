@@ -23,7 +23,7 @@ const AIProjectPreview = ({ project, index }: Props) => {
     const shots = project.screenshots?.slice(0, 3);
 
     return (
-        <div className="relative min-h-[600px] overflow-hidden rounded-2xl border border-white/10 bg-[#0e1013]">
+        <div className="relative min-h-[600px] overflow-hidden rounded-2xl border border-border bg-card">
             <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0 transition-[background] duration-700"
@@ -44,7 +44,7 @@ const AIProjectPreview = ({ project, index }: Props) => {
                     {/* Outlined number */}
                     <span
                         aria-hidden
-                        className="pointer-events-none absolute -right-3 -top-7 select-none font-anton text-[8rem] leading-none text-transparent"
+                        className="pointer-events-none absolute -right-3 -top-7 select-none font-display text-[8rem] font-semibold leading-none tracking-[-0.05em] text-transparent"
                         style={{
                             WebkitTextStroke: `1px rgba(${project.accent},0.28)`,
                         }}
@@ -58,10 +58,10 @@ const AIProjectPreview = ({ project, index }: Props) => {
                     >
                         {project.category}
                     </p>
-                    <h3 className="mt-3 max-w-[85%] font-anton text-3xl uppercase leading-none text-white">
+                    <h3 className="mt-3 max-w-[85%] text-[1.75rem] font-semibold leading-[1.02] tracking-[-0.035em] text-foreground">
                         {project.title}
                     </h3>
-                    <p className="mt-3 max-w-[34ch] text-sm leading-relaxed text-white/55">
+                    <p className="mt-3 max-w-[34ch] text-sm leading-relaxed text-muted-foreground">
                         {project.teaser}
                     </p>
 
@@ -86,7 +86,7 @@ const AIProjectPreview = ({ project, index }: Props) => {
                                 {shots.map((src, i) => (
                                     <div
                                         key={src}
-                                        className="absolute top-0 aspect-[9/19.5] w-[34%] overflow-hidden rounded-[18px] border border-white/15 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.8)]"
+                                        className="absolute top-0 aspect-[9/19.5] w-[34%] overflow-hidden rounded-[18px] border border-foreground/15 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.8)]"
                                         style={{
                                             left: `${i * 31}%`,
                                             zIndex: i === 1 ? 2 : 1,
@@ -113,7 +113,7 @@ const AIProjectPreview = ({ project, index }: Props) => {
                         )}
                     </div>
 
-                    <p className="mt-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/35">
+                    <p className="mt-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                         <ArrowDown size={12} />
                         Click to view the system
                     </p>

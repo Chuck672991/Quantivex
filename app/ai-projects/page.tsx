@@ -1,3 +1,4 @@
+import { BRAND } from '@/lib/brand';
 import { AI_PROJECTS } from '@/lib/aiData';
 import type { Metadata } from 'next';
 import AIProjectHero from './_components/AIProjectHero';
@@ -5,14 +6,15 @@ import AIProjectList from './_components/AIProjectList';
 import AIProjectShowcase from './_components/AIProjectShowcase';
 import AIProjectsClosing from './_components/AIProjectsClosing';
 
-const DESCRIPTION =
-    'Agentic AI systems by Haider Ali — LLM agents with tool calling, MCP integrations, context-aware retrieval and n8n automation pipelines.';
+const TITLE = `AI Projects | ${BRAND.name}`;
+const DESCRIPTION = `Agentic AI systems from ${BRAND.name}: LLM agents with tool calling, MCP integrations, context-aware retrieval and n8n automation pipelines.`;
 
 export const metadata: Metadata = {
-    title: 'AI Projects | Haider Ali',
+    // absolute: the root layout's title template would otherwise append the brand twice
+    title: { absolute: TITLE },
     description: DESCRIPTION,
     openGraph: {
-        title: 'AI Projects | Haider Ali',
+        title: TITLE,
         description: DESCRIPTION,
         type: 'website',
     },
@@ -20,11 +22,12 @@ export const metadata: Metadata = {
 
 export default function AIProjectsPage() {
     return (
+        // `dark` flips every token inside to the ink surface.
         // overflow-x-clip, not hidden: hidden would stop the index preview
         // from sticking (it makes this element the sticky scroll container).
         <div
             id="ai-projects-page"
-            className="relative w-full overflow-x-clip bg-[#0B0C0E] text-white selection:bg-primary/30 selection:text-white"
+            className="dark relative w-full overflow-x-clip bg-ink-950 text-foreground selection:bg-primary/30 selection:text-foreground"
         >
             <AIProjectHero />
             <AIProjectList projects={AI_PROJECTS} />

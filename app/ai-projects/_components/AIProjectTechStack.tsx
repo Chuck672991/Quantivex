@@ -1,9 +1,9 @@
 import StackIcon from '@/components/StackIcon';
-import { MY_STACK } from '@/lib/data';
+import { TECH_STACK } from '@/lib/data';
 import type { IStackItem } from '@/types';
 
 const SKILLS = new Map<string, IStackItem>(
-    MY_STACK.flatMap((g) => g.items).map((item) => [item.name, item]),
+    TECH_STACK.flatMap((g) => g.items).map((item) => [item.name, item]),
 );
 
 // Project tech strings that differ from the skill names they correspond to.
@@ -31,7 +31,7 @@ const AIProjectTechStack = ({ technologies, accent }: Props) => (
             return (
                 <li
                     key={tech}
-                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70"
+                    className="inline-flex items-center gap-2 rounded-full border border-border bg-foreground/[0.03] px-3 py-1.5 text-xs text-foreground/80"
                 >
                     {skill ? (
                         <StackIcon item={skill} size={14} bare />

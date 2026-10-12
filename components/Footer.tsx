@@ -1,58 +1,135 @@
-import { GitFork, Star } from 'lucide-react';
+import { BRAND, SERVICES, SOCIAL_LINKS, WORK_LINKS } from '@/lib/brand';
+import AnchorLink from './AnchorLink';
+import BackToTop from './BackToTop';
+import GridBackdrop from './GridBackdrop';
+import Logo from './Logo';
+import Reveal from './Reveal';
+import FooterWordmark from './scroll/FooterWordmark';
 
-interface RepoStats {
-    stargazers_count: number;
-    forks_count: number;
-}
+const COMPANY_LINKS = [
+    { name: 'Selected work', href: '/#work' },
+    { name: 'AI solutions', href: '/#ai-systems' },
+    { name: 'Process', href: '/#process' },
+    { name: 'Why Quantivex', href: '/#why-us' },
+    { name: 'Contact', href: '/#contact' },
+];
 
-const Footer = async () => {
-    let stargazers_count = 0;
-    let forks_count = 0;
+const linkClass =
+    'text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground';
 
-    try {
-        const repoStats = await fetch(
-            'https://api.github.com/repos/Chuck672991/Portfolio-v2',
-            {
-                next: {
-                    revalidate: 60 * 60, // 1 hour
-                },
-            },
-        );
+const Column = ({
+    title,
+    children,
+    delay = 0,
+}: {
+    title: string;
+    children: React.ReactNode;
+    delay?: number;
+}) => (
+    <Reveal delay={delay}>
+        <h2 className="mb-5 font-mono text-[11px] font-normal uppercase tracking-[0.2em] text-foreground/50">
+            {title}
+        </h2>
+        <ul className="space-y-3">{children}</ul>
+    </Reveal>
+);
 
-        if (repoStats.ok) {
-            const data = (await repoStats.json()) as RepoStats;
-            stargazers_count = data.stargazers_count ?? 0;
-            forks_count = data.forks_count ?? 0;
-        }
-    } catch {
-        // Build/offline: keep zeros
-    }
-
+const Footer = () => {
     return (
         <footer
-            className="border-t border-border/40 py-6 text-sm text-muted-foreground"
             id="footer"
+            className="dark relative overflow-hidden bg-ink-950 text-foreground"
         >
-            <div className="container flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p>© {new Date().getFullYear()} Haider Ali. All rights reserved.</p>
+            <GridBackdrop fade="bottom" />
 
-                <a
-                    href="https://github.com/Chuck672991"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 hover:text-foreground transition-colors duration-200"
-                >
-                    <span className="flex items-center gap-1.5">
-                        <Star size={13} />
-                        {stargazers_count}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                        <GitFork size={13} />
-                        {forks_count}
-                    </span>
-                    <span>Design &amp; built by Haider Ali</span>
-                </a>
+            <div className="container relative pb-10 pt-20 md:pt-28">
+                <div className="grid gap-14 lg:grid-cols-12">
+                    <Reveal className="lg:col-span-5">
+                        <Logo tone="dark" />
+                        <p className="mt-6 max-w-sm text-[15px] leading-relaxed text-muted-foreground">
+                            Web platforms, mobile apps and AI systems —
+                            engineered from first prototype to production.
+                        </p>
+                        <a
+                            href={`mailto:${BRAND.email}`}
+                            className="mt-8 inline-block font-display text-xl tracking-tight text-foreground underline decoration-foreground/30 underline-offset-[6px] transition-colors hover:decoration-primary sm:text-2xl"
+                        >
+                            {BRAND.email}
+                        </a>
+                    </Reveal>
+
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:col-span-7">
+                        <Column title="Services">
+                            {SERVICES.map((service) => (
+                                <li key={service.id}>
+                                    <AnchorLink
+                                        href="/#services"
+                                        className={linkClass}
+                                    >
+                                        {service.title}
+                                    </AnchorLink>
+                                </li>
+                            ))}
+                        </Column>
+                        <Column title="Work" delay={0.08}>
+                            {WORK_LINKS.map((link) => (
+                                <li key={link.name}>
+                                    <AnchorLink
+                                        href={link.href}
+                                        className={linkClass}
+                                    >
+                                        {link.name}
+                                    </AnchorLink>
+                                </li>
+                            ))}
+                            {COMPANY_LINKS.slice(0, 1).map((link) => (
+                                <li key={link.name}>
+                                    <AnchorLink
+                                        href={link.href}
+                                        className={linkClass}
+                                    >
+                                        {link.name}
+                                    </AnchorLink>
+                                </li>
+                            ))}
+                        </Column>
+                        <Column title="Company" delay={0.16}>
+                            {COMPANY_LINKS.slice(1).map((link) => (
+                                <li key={link.name}>
+                                    <AnchorLink
+                                        href={link.href}
+                                        className={linkClass}
+                                    >
+                                        {link.name}
+                                    </AnchorLink>
+                                </li>
+                            ))}
+                            {SOCIAL_LINKS.map((link) => (
+                                <li key={link.name}>
+                                    <a
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={linkClass}
+                                    >
+                                        {link.name}
+                                    </a>
+                                </li>
+                            ))}
+                        </Column>
+                    </div>
+                </div>
+
+                <div className="mt-20 flex flex-col-reverse items-start justify-between gap-5 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center">
+                    <p>
+                        © {new Date().getFullYear()} {BRAND.name}. All rights
+                        reserved.
+                    </p>
+                    <BackToTop />
+                </div>
             </div>
+
+            <FooterWordmark />
         </footer>
     );
 };

@@ -12,7 +12,8 @@ interface ProjectContentProps {
 }
 
 export default function ProjectContent({ project }: ProjectContentProps) {
-  const { id, title, shortPitch, description, appStoreUrl, playStoreUrl, gitHubUrl, techStack, features } = project;
+  const { id, title, shortPitch, description, appStoreUrl, playStoreUrl, liveUrl, techStack, features } = project;
+  const hasLinks = Boolean(appStoreUrl || playStoreUrl || liveUrl);
 
   // Variants for staggering tech stack pills
   const techStackContainerVariants = {
@@ -66,14 +67,14 @@ export default function ProjectContent({ project }: ProjectContentProps) {
         variants={techStackContainerVariants}
         initial="hidden"
         animate="visible"
-        className="flex flex-wrap gap-2.5"
+        className="flex flex-wrap gap-2"
       >
         {techStack.map((tech) => (
           <motion.span
             key={`${id}-tech-${tech}`}
             variants={pillVariants}
             whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.2 } }}
-            className="text-xs font-semibold px-3 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg hover:border-primary/50 transition-colors select-none"
+            className="text-xs font-medium px-3 py-1.5 bg-secondary border border-border text-foreground/80 rounded-full hover:border-primary/50 transition-colors select-none"
           >
             {tech}
           </motion.span>
@@ -86,7 +87,7 @@ export default function ProjectContent({ project }: ProjectContentProps) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35, duration: 0.5 }}
-        className="text-base text-muted-foreground font-sans leading-relaxed text-neutral-300 dark:text-neutral-300 light:text-neutral-700"
+        className="text-base text-muted-foreground font-sans leading-relaxed"
       >
         {description}
       </motion.p>
@@ -97,19 +98,21 @@ export default function ProjectContent({ project }: ProjectContentProps) {
         projectId={id}
       />
 
-      {/* Store Download / GitHub Links */}
-      <motion.div
-        key={`${id}-buttons`}
-        variants={buttonsVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <StoreButtons
-          appStoreUrl={appStoreUrl}
-          playStoreUrl={playStoreUrl}
-          gitHubUrl={gitHubUrl}
-        />
-      </motion.div>
+      {/* Store listings and the product's website, when they exist */}
+      {hasLinks && (
+        <motion.div
+          key={`${id}-buttons`}
+          variants={buttonsVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <StoreButtons
+            appStoreUrl={appStoreUrl}
+            playStoreUrl={playStoreUrl}
+            liveUrl={liveUrl}
+          />
+        </motion.div>
+      )}
     </div>
   );
 }

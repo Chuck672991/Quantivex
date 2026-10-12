@@ -1,22 +1,21 @@
 'use client';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
 import AiRobotScene from '@/components/AiRobotScene';
-import SectionTitle from '@/components/SectionTitle';
+import Button from '@/components/Button';
+import Reveal from '@/components/Reveal';
 import TransitionLink from '@/components/TransitionLink';
 import { AI_CAPABILITIES, AI_PROJECTS } from '@/lib/aiData';
 import { cn } from '@/lib/utils';
-import {
-    motion,
-    useReducedMotion,
-    useSpring,
-    useTransform,
-} from 'framer-motion';
+import { motion, useSpring, useTransform } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import { useState, type PointerEvent } from 'react';
+import { gsap } from '@/lib/scroll/gsap';
+import { useAct } from '@/lib/scroll/useAct';
+import { useAnimGate } from '@/lib/useAnimGate';
+import { useRef, useState, type PointerEvent } from 'react';
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 const SPRING = { stiffness: 70, damping: 18, mass: 0.6 };
-const DEFAULT_GLOW = '34, 211, 238';
+const DEFAULT_GLOW = '107, 140, 255';
 
 // Static class names so Tailwind can see them: each side stacks in rows 1–3.
 const ROW = ['lg:row-start-1', 'lg:row-start-2', 'lg:row-start-3'];
@@ -24,45 +23,85 @@ const COL = { left: 'lg:col-start-1', right: 'lg:col-start-3' } as const;
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/**
- * One line of the headline, masked so it rises into view. The *mask* is what
- * gets observed: a translated child sits fully outside its own overflow-hidden
- * parent, so the browser reports zero intersection and it would never fire.
- */
+/** One line of the headline, sliding up inside its own clip. */
 const MaskedLine = ({
     children,
     delay = 0,
     className,
-    reduce,
 }: {
     children: string;
     delay?: number;
     className?: string;
-    reduce: boolean;
 }) => (
-    <motion.span
-        className="block overflow-hidden pb-[0.1em]"
-        initial={reduce ? false : 'hidden'}
-        whileInView="show"
-        viewport={{ once: true, amount: 0.6 }}
-    >
-        <motion.span
-            className={cn('block', className)}
-            variants={{
-                hidden: { y: '110%' },
-                show: {
-                    y: 0,
-                    transition: { duration: 0.9, ease: EASE, delay },
-                },
-            }}
-        >
-            {children}
-        </motion.span>
-    </motion.span>
+    <Reveal variant="mask" delay={delay} className="pb-[0.1em]">
+        <span className={cn('block', className)}>{children}</span>
+    </Reveal>
 );
 
 const AISection = () => {
-    const reduce = useReducedMotion() ?? false;
+    const reduce = useReducedMotion();
+    const sectionRef = useRef<HTMLElement>(null);
+    const cardRef = useRef<HTMLDivElement>(null);
+    useAnimGate(cardRef);
+
+    // Portal: the ink card starts as a window inside the page and opens to the
+    // full width of the screen as it arrives, the robot growing into it. Only
+    // the card's background layer is clipped (a static gradient: cheap to
+    // repaint); the content on top is never masked.
+    useAct(sectionRef, ({ q }) => {
+        const card = cardRef.current;
+        const bg = q('[data-ai="bg"]')[0];
+        const robot = q('[data-ai="robot"]')[0];
+        if (!card || !bg) return;
+
+        gsap.set(bg, {
+            left: '50%',
+            right: 'auto',
+            xPercent: -50,
+            width: '100vw',
+            borderWidth: 0,
+            borderRadius: 0,
+        });
+
+        const tl = gsap.timeline({
+            defaults: { ease: 'none' },
+            scrollTrigger: {
+                trigger: card,
+                start: 'top 92%',
+                end: 'top 22%',
+                scrub: true,
+                invalidateOnRefresh: true,
+            },
+        });
+        tl.fromTo(
+            bg,
+            {
+                clipPath: () => {
+                    const side = Math.max(
+                        0,
+                        (document.documentElement.clientWidth -
+                            card.offsetWidth) /
+                            2,
+                    );
+                    return `inset(0px ${side}px 0px ${side}px round 28px)`;
+                },
+            },
+            {
+                clipPath: 'inset(0px 0px 0px 0px round 0px)',
+                ease: 'power2.inOut',
+                duration: 1,
+            },
+            0,
+        );
+        if (robot) {
+            tl.fromTo(
+                robot,
+                { scale: 0.82, opacity: 0.2 },
+                { scale: 1, opacity: 1, ease: 'power2.out', duration: 0.8 },
+                0.1,
+            );
+        }
+    });
     const [activeCap, setActiveCap] = useState<string | null>(null);
     const [activeProject, setActiveProject] = useState<string | null>(null);
 
@@ -72,15 +111,15 @@ const AISection = () => {
     const litProjects = capability
         ? capability.projectIds
         : activeProject
-          ? [activeProject]
-          : [];
+        ? [activeProject]
+        : [];
     const litCaps = activeProject
         ? AI_CAPABILITIES.filter((c) =>
               c.projectIds.includes(activeProject),
           ).map((c) => c.id)
         : activeCap
-          ? [activeCap]
-          : [];
+        ? [activeCap]
+        : [];
     const anyLit = litProjects.length > 0 || litCaps.length > 0;
     const glowProject = activeProject ?? litProjects[0] ?? null;
 
@@ -105,105 +144,89 @@ const AISection = () => {
     };
 
     return (
-        <section id="ai-systems" className="pb-section max-md:pb-20">
+        <section id="ai-systems" ref={sectionRef} className="py-12 md:py-20">
             <div className="container">
-                <SectionTitle title="AI & INTELLIGENT SYSTEMS" />
-
                 <div
-                    className="relative overflow-hidden rounded-[20px] border border-white/[0.06] bg-[#0B0C0E] text-white"
+                    ref={cardRef}
+                    className="dark relative text-foreground"
                     onPointerMove={onPointerMove}
                     onPointerLeave={onPointerLeave}
                 >
-                    {/* Grid + ambient glows (opacity-only transitions — no blur filters) */}
+                    {/* The card's background: grid + ambient glows (opacity-only
+                        transitions — no blur filters). It owns the clipping and
+                        the border, so the portal can widen it past the card. */}
                     <div
+                        data-ai="bg"
                         aria-hidden
-                        className="pointer-events-none absolute inset-0"
-                        style={{
-                            backgroundImage:
-                                'linear-gradient(to right,rgba(255,255,255,0.022) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.022) 1px,transparent 1px)',
-                            backgroundSize: '48px 48px',
-                        }}
-                    />
-                    <div
-                        aria-hidden
-                        className="pointer-events-none absolute inset-0"
-                        style={{
-                            background: `radial-gradient(55% 50% at 50% 56%, rgba(${DEFAULT_GLOW},0.14), transparent 70%), radial-gradient(40% 40% at 88% 8%, rgba(99,102,241,0.14), transparent 70%)`,
-                        }}
-                    />
-                    {AI_PROJECTS.map((p) => (
+                        className="pointer-events-none absolute inset-0 overflow-hidden rounded-[28px] border border-border bg-ink-950"
+                    >
                         <div
-                            key={p.id}
                             aria-hidden
-                            className={cn(
-                                'pointer-events-none absolute inset-0 transition-opacity duration-700',
-                                glowProject === p.id
-                                    ? 'opacity-100'
-                                    : 'opacity-0',
-                            )}
+                            className="pointer-events-none absolute inset-0"
                             style={{
-                                background: `radial-gradient(55% 50% at 50% 56%, rgba(${p.accent},0.2), transparent 70%)`,
+                                backgroundImage:
+                                    'linear-gradient(to right,rgba(255,255,255,0.022) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.022) 1px,transparent 1px)',
+                                backgroundSize: '48px 48px',
                             }}
                         />
-                    ))}
+                        <div
+                            aria-hidden
+                            className="pointer-events-none absolute inset-0"
+                            style={{
+                                background: `radial-gradient(55% 50% at 50% 56%, rgba(${DEFAULT_GLOW},0.14), transparent 70%), radial-gradient(40% 40% at 88% 8%, rgba(63,104,242,0.16), transparent 70%)`,
+                            }}
+                        />
+                        {AI_PROJECTS.map((p) => (
+                            <div
+                                key={p.id}
+                                aria-hidden
+                                className={cn(
+                                    'pointer-events-none absolute inset-0 transition-opacity duration-700',
+                                    glowProject === p.id
+                                        ? 'opacity-100'
+                                        : 'opacity-0',
+                                )}
+                                style={{
+                                    background: `radial-gradient(55% 50% at 50% 56%, rgba(${p.accent},0.2), transparent 70%)`,
+                                }}
+                            />
+                        ))}
+                    </div>
 
                     <div className="relative z-10 px-6 pb-8 pt-10 md:px-12 md:pt-14 lg:px-16">
                         {/* ── Headline ── */}
-                        <motion.p
-                            initial={reduce ? false : { opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, ease: EASE }}
-                            className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-cyan-300/80"
-                        >
-                            <span className="relative flex size-2">
-                                <span className="absolute inline-flex size-full animate-ping rounded-full bg-cyan-300 opacity-60 motion-reduce:animate-none" />
-                                <span className="relative inline-flex size-2 rounded-full bg-cyan-300" />
-                            </span>
-                            AI Engineering
-                        </motion.p>
+                        <Reveal y={10}>
+                            <p className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-primary">
+                                <span className="relative flex size-2">
+                                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60 motion-reduce:animate-none" />
+                                    <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                                </span>
+                                03 — AI Solutions
+                            </p>
+                        </Reveal>
 
-                        <h3 className="max-w-5xl font-anton text-4xl uppercase leading-[0.92] sm:text-5xl md:text-6xl lg:text-7xl">
-                            <MaskedLine reduce={reduce}>
-                                I don’t just build interfaces.
+                        <h3 className="max-w-5xl text-[clamp(2.1rem,5.6vw,4.6rem)] font-medium leading-[1] tracking-[-0.045em]">
+                            <MaskedLine>
+                                We don’t just build interfaces.
                             </MaskedLine>
-                            <MaskedLine
-                                reduce={reduce}
-                                delay={0.12}
-                                className="text-gradient"
-                            >
-                                I build intelligent systems.
+                            <MaskedLine delay={0.12} className="text-gradient">
+                                We build intelligent systems.
                             </MaskedLine>
                         </h3>
 
-                        <motion.p
-                            initial={reduce ? false : { opacity: 0, y: 14 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{
-                                duration: 0.7,
-                                ease: EASE,
-                                delay: 0.25,
-                            }}
-                            className="mt-6 max-w-xl text-sm leading-relaxed text-white/50 md:text-base"
-                        >
-                            Agentic AI systems — LLM agents with tool calling,
-                            MCP integrations, context-aware retrieval and n8n
-                            automation pipelines — built into the web and
-                            mobile products around them.
-                        </motion.p>
+                        <Reveal delay={0.25} y={14}>
+                            <p className="mt-6 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                                Agentic AI systems — LLM agents with tool
+                                calling, MCP integrations, context-aware
+                                retrieval and n8n automation pipelines — built
+                                into the web and mobile products around them.
+                            </p>
+                        </Reveal>
 
                         {/* ── Robot + callouts ── */}
                         <div className="relative mt-6 grid grid-cols-2 gap-3 lg:mt-2 lg:grid-cols-[1fr_minmax(0,540px)_1fr] lg:grid-rows-3 lg:gap-x-4 lg:gap-y-0">
-                            <motion.div
-                                initial={
-                                    reduce
-                                        ? false
-                                        : { opacity: 0, scale: 0.9 }
-                                }
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true, amount: 0.2 }}
-                                transition={{ duration: 1, ease: EASE }}
+                            <div
+                                data-ai="robot"
                                 className="relative order-first col-span-2 mx-auto aspect-square w-full max-w-[400px] lg:order-none lg:col-span-1 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:aspect-auto lg:h-[640px] lg:max-w-none"
                             >
                                 {/* Orbit rings sit behind the canvas */}
@@ -212,12 +235,12 @@ const AISection = () => {
                                     style={{ x: ringX, y: ringY }}
                                     className="pointer-events-none absolute inset-0"
                                 >
-                                    <div className="ai-spin absolute inset-[4%] rounded-full border border-dashed border-cyan-300/15 lg:inset-[2%]" />
-                                    <div className="ai-spin-reverse absolute inset-[16%] rounded-full border border-indigo-300/15 lg:inset-[14%]" />
-                                    <div className="absolute inset-[30%] rounded-full border border-white/[0.06] lg:inset-[28%]" />
+                                    <div className="ai-spin absolute inset-[4%] rounded-full border border-dashed border-primary/20 lg:inset-[2%]" />
+                                    <div className="ai-spin-reverse absolute inset-[16%] rounded-full border border-primary/15 lg:inset-[14%]" />
+                                    <div className="absolute inset-[30%] rounded-full border border-border lg:inset-[28%]" />
                                 </motion.div>
                                 <AiRobotScene className="absolute inset-0" />
-                            </motion.div>
+                            </div>
 
                             {AI_CAPABILITIES.map((cap, i) => {
                                 const sideIndex = AI_CAPABILITIES.filter(
@@ -227,23 +250,12 @@ const AISection = () => {
                                 const left = cap.side === 'left';
 
                                 return (
-                                    <motion.div
+                                    <Reveal
                                         key={cap.id}
-                                        initial={
-                                            reduce
-                                                ? false
-                                                : {
-                                                      opacity: 0,
-                                                      x: left ? -24 : 24,
-                                                  }
-                                        }
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true, amount: 0.5 }}
-                                        transition={{
-                                            duration: 0.8,
-                                            ease: EASE,
-                                            delay: 0.15 + i * 0.07,
-                                        }}
+                                        x={left ? -24 : 24}
+                                        y={0}
+                                        delay={0.15 + i * 0.07}
+                                        amount={0.2}
                                         className={cn(
                                             'lg:self-center',
                                             COL[cap.side],
@@ -265,18 +277,18 @@ const AISection = () => {
                                                 'relative rounded-xl border px-4 py-3 transition-[border-color,background-color,opacity] duration-300 lg:max-w-[240px]',
                                                 left && 'lg:ml-auto',
                                                 lit
-                                                    ? 'border-cyan-300/50 bg-cyan-300/[0.07]'
-                                                    : 'border-white/10 bg-white/[0.03]',
+                                                    ? 'border-primary/50 bg-primary/[0.08]'
+                                                    : 'border-border bg-foreground/[0.03]',
                                                 anyLit && !lit && 'opacity-50',
                                             )}
                                         >
-                                            <p className="font-mono text-[10px] tracking-[0.22em] text-cyan-300/80">
+                                            <p className="font-mono text-[10px] tracking-[0.22em] text-primary">
                                                 {pad(i + 1)}
                                             </p>
-                                            <p className="mt-1 text-sm font-semibold text-white">
+                                            <p className="mt-1 text-sm font-semibold text-foreground">
                                                 {cap.label}
                                             </p>
-                                            <p className="mt-0.5 text-xs leading-snug text-white/50">
+                                            <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
                                                 {cap.detail}
                                             </p>
 
@@ -286,31 +298,31 @@ const AISection = () => {
                                                 className={cn(
                                                     'pointer-events-none absolute top-1/2 hidden h-px w-14 lg:block',
                                                     left
-                                                        ? 'left-full bg-gradient-to-r from-cyan-300/45 to-transparent'
-                                                        : 'right-full bg-gradient-to-l from-cyan-300/45 to-transparent',
+                                                        ? 'left-full bg-gradient-to-r from-primary/50 to-transparent'
+                                                        : 'right-full bg-gradient-to-l from-primary/50 to-transparent',
                                                 )}
                                             />
                                             <span
                                                 aria-hidden
                                                 className={cn(
-                                                    'pointer-events-none absolute top-1/2 hidden size-1.5 -translate-y-1/2 rounded-full bg-cyan-300 transition-shadow duration-300 lg:block',
+                                                    'pointer-events-none absolute top-1/2 hidden size-1.5 -translate-y-1/2 rounded-full bg-primary transition-shadow duration-300 lg:block',
                                                     left
                                                         ? 'left-[calc(100%+3.5rem)]'
                                                         : 'right-[calc(100%+3.5rem)]',
                                                     lit &&
-                                                        'shadow-[0_0_14px_3px_rgba(34,211,238,0.65)]',
+                                                        'shadow-[0_0_14px_3px_rgba(107,140,255,0.6)]',
                                                 )}
                                             />
                                         </motion.div>
-                                    </motion.div>
+                                    </Reveal>
                                 );
                             })}
                         </div>
 
                         {/* ── Systems shipped + CTA ── */}
                         <div className="mt-8 lg:mt-4">
-                            <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/35">
-                                Systems I’ve built
+                            <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/80">
+                                Systems we’ve built
                             </p>
                             <ul className="grid sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-5">
                                 {AI_PROJECTS.map((p, i) => {
@@ -332,7 +344,7 @@ const AISection = () => {
                                                     setActiveProject(null)
                                                 }
                                                 className={cn(
-                                                    'group relative flex h-full flex-col gap-1 border-t border-white/10 py-4 pr-3 transition-opacity duration-300 focus-visible:outline-none',
+                                                    'group relative flex h-full flex-col gap-1 border-t border-border py-4 pr-3 transition-opacity duration-300 focus-visible:outline-none',
                                                     anyLit &&
                                                         !lit &&
                                                         'opacity-45',
@@ -341,16 +353,16 @@ const AISection = () => {
                                                 <span
                                                     aria-hidden
                                                     className={cn(
-                                                        'absolute inset-x-0 -top-px h-px origin-left bg-cyan-300 transition-transform duration-500',
+                                                        'absolute inset-x-0 -top-px h-px origin-left bg-primary transition-transform duration-500',
                                                         lit
                                                             ? 'scale-x-100'
                                                             : 'scale-x-0',
                                                     )}
                                                 />
-                                                <span className="font-mono text-[10px] tracking-[0.22em] text-cyan-300/70">
+                                                <span className="font-mono text-[10px] tracking-[0.22em] text-primary">
                                                     {pad(i + 1)}
                                                 </span>
-                                                <span className="flex items-start justify-between gap-2 font-anton text-lg uppercase leading-tight">
+                                                <span className="flex items-start justify-between gap-2 font-display text-[17px] font-medium leading-tight tracking-[-0.02em]">
                                                     {p.title}
                                                     <ArrowUpRight
                                                         size={15}
@@ -362,7 +374,7 @@ const AISection = () => {
                                                         )}
                                                     />
                                                 </span>
-                                                <span className="text-xs text-white/45">
+                                                <span className="text-xs text-muted-foreground">
                                                     {p.category}
                                                 </span>
                                             </TransitionLink>
@@ -372,17 +384,15 @@ const AISection = () => {
                             </ul>
 
                             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-                                <TransitionLink
+                                <Button
                                     href="/ai-projects"
-                                    className="group inline-flex items-center gap-2 bg-primary px-6 py-3.5 font-anton text-sm uppercase tracking-wider text-primary-foreground transition-colors duration-300 hover:bg-primary/90"
+                                    variant="cobalt"
+                                    size="lg"
+                                    arrow
                                 >
-                                    Explore AI Projects
-                                    <ArrowUpRight
-                                        size={18}
-                                        className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                                    />
-                                </TransitionLink>
-                                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/35">
+                                    Explore AI projects
+                                </Button>
+                                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/80">
                                     {AI_PROJECTS.length} systems · agents ·
                                     retrieval · automation
                                 </span>

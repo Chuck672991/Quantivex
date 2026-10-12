@@ -1,95 +1,134 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+  Quantivex design tokens
+  Light surface: Pure White #FFFFFF · Ice Grey #F1F5F9 · Cobalt #1D4ED8 · Ink #0F172A · Slate #94A3B8
+  Add `dark` to any section or page wrapper to flip it to the ink surface; every
+  token below is redefined for it, so text-foreground / bg-primary etc. just work.
+*/
 @layer base {
   :root {
-    --background: 80 15% 93%;         /* Light olive-tinted off-white */
-    --background-light: 80 12% 96%;   /* Near-white with subtle olive hint */
-    --foreground: 80 30% 12%;         /* Very dark olive for body text */
+    --background: 0 0% 100%;              /* Pure White */
+    --background-light: 210 40% 96%;      /* Ice Grey */
+    --foreground: 222 47% 11%;            /* Ink */
 
-    --card: 80 12% 96%;               /* Off-white card surface */
-    --card-foreground: 80 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 80 12% 95%;            /* Soft olive white */
-    --popover-foreground: 80 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 79 42% 38%;            /* Olive green */
-    --primary-foreground: 0 0% 98%;   /* White text on primary */
+    --primary: 224 76% 48%;               /* Cobalt */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 28% 48%;          /* Warm khaki / tan */
-    --secondary-foreground: 40 15% 95%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 79 10% 80%;              /* Desaturated olive muted bg */
-    --muted-foreground: 79 15% 38%;   /* Muted olive-grey text */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 19% 35%;      /* slate-600: readable body copy */
 
-    --accent: 45 55% 72%;             /* Warm gold — complements olive */
-    --accent-foreground: 79 35% 12%;  /* Dark olive on accent */
+    --accent: 229 90% 70%;                /* periwinkle: gradient partner for cobalt */
+    --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 65% 50%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 79 12% 76%;             /* Subtle olive border */
-    --input: 79 12% 89%;              /* Very light olive input bg */
-    --ring: 79 42% 38%;               /* Olive focus ring */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 224 76% 48%;
 
-    --chart-1: 79 42% 38%;            /* Olive green */
-    --chart-2: 40 28% 48%;            /* Khaki */
-    --chart-3: 79 20% 58%;            /* Lighter olive */
-    --chart-4: 45 55% 65%;            /* Gold */
-    --chart-5: 79 40% 25%;            /* Dark olive */
+    --radius: 0.75rem;
   }
-}
 
-@layer base {
   .dark {
-    --background: 80 18% 10%;
-    --background-light: 80 18% 12%;
-    --foreground: 80 20% 92%;
+    --background: 222 47% 6%;             /* ink-950 */
+    --background-light: 222 41% 9%;
+    --foreground: 210 40% 96%;
 
-    --card: 80 18% 12%;
-    --card-foreground: 80 20% 92%;
+    --card: 222 41% 9%;
+    --card-foreground: 210 40% 96%;
 
-    --popover: 80 18% 12%;
-    --popover-foreground: 80 20% 92%;
+    --popover: 222 41% 9%;
+    --popover-foreground: 210 40% 96%;
 
-    --primary: 79 42% 52%;
-    --primary-foreground: 80 18% 10%;
+    --primary: 227 100% 71%;              /* light cobalt keeps contrast on ink */
+    --primary-foreground: 222 47% 8%;
 
-    --secondary: 40 25% 30%;
-    --secondary-foreground: 80 20% 92%;
+    --secondary: 222 30% 15%;
+    --secondary-foreground: 210 40% 96%;
 
-    --muted: 80 12% 18%;
-    --muted-foreground: 80 10% 70%;
+    --muted: 222 30% 13%;
+    --muted-foreground: 215 20% 65%;      /* Slate #94A3B8 */
 
-    --accent: 45 55% 60%;
-    --accent-foreground: 80 18% 10%;
+    --accent: 229 100% 82%;
+    --accent-foreground: 222 47% 8%;
 
-    --destructive: 0 65% 56%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 58%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 80 12% 22%;
-    --input: 80 12% 18%;
-    --ring: 79 42% 52%;
-
-    --chart-1: 79 42% 52%;
-    --chart-2: 40 25% 42%;
-    --chart-3: 79 22% 46%;
-    --chart-4: 45 55% 60%;
-    --chart-5: 79 40% 30%;
+    --border: 222 25% 20%;
+    --input: 222 25% 20%;
+    --ring: 227 100% 71%;
   }
 }
 
+/* Cobalt surface: a full-bleed brand panel with white type */
+@layer base {
+  .cobalt {
+    --background: 224 76% 46%;
+    --background-light: 224 76% 42%;
+    --foreground: 0 0% 100%;
 
+    --card: 224 76% 42%;
+    --card-foreground: 0 0% 100%;
+
+    --primary: 0 0% 100%;
+    --primary-foreground: 224 76% 40%;
+
+    --secondary: 224 76% 40%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 224 76% 42%;
+    --muted-foreground: 221 100% 92%;
+
+    --accent: 221 100% 88%;
+    --accent-foreground: 224 76% 30%;
+
+    --border: 221 100% 90%;
+    --input: 221 100% 90%;
+    --ring: 0 0% 100%;
+  }
+}
 
 @layer base {
-    ::-webkit-scrollbar {
-        display: none;
-    }
     * {
-        @apply border-border !cursor-none;
+        @apply border-border;
     }
+
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
     body {
-        @apply bg-background text-foreground font-roboto-flex;
+        @apply bg-background text-foreground font-sans antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply font-display tracking-tight;
+    }
+
+    ::selection {
+        background: hsl(var(--primary) / 0.22);
+    }
+
+    :focus-visible {
+        outline: 2px solid hsl(var(--ring));
+        outline-offset: 3px;
     }
 }
 
@@ -101,6 +140,91 @@
     .markdown-text ul {
         @apply pl-5 mt-2 list-disc;
     }
+}
+
+@layer utilities {
+    /* Cobalt → periwinkle headline accent */
+    .text-gradient {
+        background: linear-gradient(
+            120deg,
+            hsl(var(--primary)) 0%,
+            hsl(var(--accent)) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Faint isometric lattice, the texture behind the hero (diamonds at the
+       2:1 isometric angle). Pass colour through --lattice for dark surfaces. */
+    .bg-lattice {
+        --lattice: 222 47% 11%;
+        background-image:
+            repeating-linear-gradient(
+                26.565deg,
+                hsl(var(--lattice) / 0.045) 0 1px,
+                transparent 1px 14px
+            ),
+            repeating-linear-gradient(
+                -26.565deg,
+                hsl(var(--lattice) / 0.045) 0 1px,
+                transparent 1px 14px
+            );
+    }
+
+    .dark .bg-lattice,
+    .cobalt .bg-lattice,
+    .bg-lattice.dark {
+        --lattice: 210 40% 96%;
+    }
+
+    /* Square blueprint grid for ink sections */
+    .bg-grid {
+        --grid: 222 47% 11%;
+        background-image:
+            linear-gradient(to right, hsl(var(--grid) / 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, hsl(var(--grid) / 0.05) 1px, transparent 1px);
+        background-size: 48px 48px;
+    }
+
+    .dark .bg-grid,
+    .cobalt .bg-grid,
+    .bg-grid.dark {
+        --grid: 210 40% 96%;
+    }
+
+    .hairline {
+        box-shadow: inset 0 0 0 1px hsl(var(--border));
+    }
+}
+
+/* ─── Performance ─────────────────────────────────────────── */
+/* Looping animations stop while their section is off-screen (useAnimGate) */
+[data-anim='off'],
+[data-anim='off'] * {
+    animation-play-state: paused !important;
+}
+
+/* Frosted glass, cheaper as the device gets weaker (lib/perf.ts sets data-perf) */
+.perf-glass {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+html[data-perf='1'] .perf-glass {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+html[data-perf='2'] .perf-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: hsl(var(--background) / 0.97);
+}
+
+/* Purely decorative layers (glows, orbit rings) drop out on the weakest tier */
+html[data-perf='2'] .perf-fx {
+    display: none;
 }
 
 /* ─── Marquee ─────────────────────────────────────────────── */
@@ -118,38 +242,19 @@
     animation-play-state: paused;
 }
 
-/* ─── Decorative hero orb ─────────────────────────────────── */
-.hero-orb {
-    background: radial-gradient(
-        circle,
-        hsl(var(--primary) / 0.12) 0%,
-        transparent 70%
-    );
+/* Scroll cue: compositor transform, gated by useAnimGate */
+@keyframes cue-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(6px); }
 }
 
-/* ─── Available-for-work dot (ping ring handled by Tailwind animate-ping) ── */
-/* nothing extra needed — Tailwind's animate-ping covers it */
-
-/* ─── Gradient text utility ───────────────────────────────── */
-.text-gradient {
-    background: linear-gradient(
-        135deg,
-        hsl(var(--primary)) 0%,
-        hsl(var(--accent)) 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.cue-bounce {
+    animation: cue-bounce 1.5s ease-in-out infinite;
 }
 
-/* ─── Timeline line fill (scaleY GSAP origin) ─────────────── */
+/* ─── Timeline line fill (scale origin for GSAP) ─────────── */
 .timeline-line-fill {
     transform-origin: top center;
-}
-
-/* ─── Service card top-border reveal ──────────────────────── */
-.service-top-line {
-    transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* ─── AI robot mount (components/AiRobot.jsx) ─────────────── */
@@ -208,7 +313,9 @@
 
 @media (prefers-reduced-motion: reduce) {
     .ai-spin,
-    .ai-spin-reverse {
+    .ai-spin-reverse,
+    .cue-bounce,
+    .animate-marquee {
         animation: none;
     }
 
@@ -217,4 +324,25 @@
         animation: none;
         opacity: 0;
     }
+}
+
+/* ─── Scroll reveals (components/Reveal.tsx) ─────────────── */
+/* Hidden until the script poses and plays them; reduced motion sees them as is */
+@media (prefers-reduced-motion: no-preference) {
+    [data-reveal],
+    [data-sx] {
+        visibility: hidden;
+    }
+
+    /* Intro statement: dim until its scrubbed tween lights each word */
+    [data-word] {
+        opacity: 0.16;
+    }
+}
+
+/* A portal that opens to the full screen width (AI section, CTA) is wider than
+   its card by design. `clip` stops it adding horizontal scroll without making
+   <main> a scroll container, so position: sticky inside it keeps working. */
+main {
+    overflow-x: clip;
 }

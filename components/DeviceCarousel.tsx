@@ -1,7 +1,9 @@
 'use client';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
+import { useViewportWidth } from '@/lib/useViewportWidth';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import DeviceFrame from './DeviceFrame';
 import { cn } from '@/lib/utils';
@@ -16,32 +18,22 @@ export default function DeviceCarousel({
   title = 'App Showcase',
 }: DeviceCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(1200);
+  const windowWidth = useViewportWidth();
   const shouldReduceMotion = useReducedMotion();
   const carouselRef = useRef<HTMLDivElement>(null);
-
-  // Track window resizing on the client side
-  useEffect(() => {
-    setWindowWidth(window.innerWidth);
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const isMobile = windowWidth < 640;
   const isTablet = windowWidth >= 640 && windowWidth < 1024;
 
   const N = screenshots.length;
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % N);
-  };
+  }, [N]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     setActiveIndex((prev) => (prev - 1 + N) % N);
-  };
+  }, [N]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -61,7 +53,7 @@ export default function DeviceCarousel({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeIndex, N]);
+  }, [handleNext, handlePrev]);
 
   // Drag Gesture Handling
   const handleDragEnd = (event: any, info: any) => {
@@ -96,7 +88,6 @@ export default function DeviceCarousel({
         scale: diff === 0 ? 1 : 0.85,
         opacity: diff === 0 ? 1 : diff === 1 || diff === -1 ? 0.4 : 0,
         zIndex: diff === 0 ? 10 : 5,
-        filter: 'blur(0px)',
       };
     }
 
@@ -115,7 +106,6 @@ export default function DeviceCarousel({
         rotateY: 0,
         opacity: 1,
         zIndex: 10,
-        filter: 'blur(0px)',
       };
     } else if (diff === 1) {
       // NEXT
@@ -127,7 +117,6 @@ export default function DeviceCarousel({
         rotateY: -rotateYOffset,
         opacity: 0.7,
         zIndex: 5,
-        filter: 'blur(1px)',
       };
     } else if (diff === -1) {
       // PREVIOUS
@@ -139,7 +128,6 @@ export default function DeviceCarousel({
         rotateY: rotateYOffset,
         opacity: 0.7,
         zIndex: 5,
-        filter: 'blur(1px)',
       };
     } else if (diff === 2 || diff === -2) {
       // FARTHER OUT (Next 2 / Prev 2)
@@ -151,7 +139,6 @@ export default function DeviceCarousel({
         rotateY: diff === 2 ? -rotateYOffset * 1.5 : rotateYOffset * 1.5,
         opacity: 0.35,
         zIndex: 3,
-        filter: 'blur(2px)',
       };
     } else {
       // OFFSCREEN
@@ -163,7 +150,6 @@ export default function DeviceCarousel({
         rotateY: diff > 0 ? -rotateYOffset * 2 : rotateYOffset * 2,
         opacity: 0,
         zIndex: 1,
-        filter: 'blur(3px)',
       };
     }
   };
@@ -176,7 +162,7 @@ export default function DeviceCarousel({
       aria-label={`${title} image carousel`}
     >
       {/* Dynamic Background Radial Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-[400px] sm:w-80 sm:h-[500px] rounded-full bg-primary/15 blur-[90px] pointer-events-none z-0" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-[400px] sm:w-80 sm:h-[500px] rounded-full pointer-events-none perf-fx z-0" style={{ background: 'radial-gradient(closest-side, hsl(var(--primary) / 0.2), transparent)' }} />
 
       {/* Swipe/Drag Container */}
       <motion.div
@@ -229,7 +215,7 @@ export default function DeviceCarousel({
       <div className="flex items-center justify-between w-full max-w-[280px] xs:max-w-[320px] mt-8 sm:mt-12 z-20">
         <button
           onClick={handlePrev}
-          className="size-11 rounded-full border border-neutral-800 hover:border-neutral-600 bg-neutral-900/50 hover:bg-neutral-900 text-foreground flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-primary/60"
+          className="size-11 rounded-full border border-border hover:border-foreground/40 bg-card/60 hover:bg-card text-foreground flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-primary/60"
           aria-label="Previous screenshot"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -245,7 +231,7 @@ export default function DeviceCarousel({
                 'h-2 rounded-full transition-all duration-300',
                 idx === activeIndex
                   ? 'w-6 bg-primary'
-                  : 'w-2 bg-neutral-700 hover:bg-neutral-500'
+                  : 'w-2 bg-foreground/20 hover:bg-foreground/40'
               )}
               aria-label={`Go to screenshot ${idx + 1}`}
               aria-current={idx === activeIndex ? 'true' : 'false'}
@@ -255,7 +241,7 @@ export default function DeviceCarousel({
 
         <button
           onClick={handleNext}
-          className="size-11 rounded-full border border-neutral-800 hover:border-neutral-600 bg-neutral-900/50 hover:bg-neutral-900 text-foreground flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-primary/60"
+          className="size-11 rounded-full border border-border hover:border-foreground/40 bg-card/60 hover:bg-card text-foreground flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-primary/60"
           aria-label="Next screenshot"
         >
           <ChevronRight className="w-5 h-5" />
@@ -263,7 +249,7 @@ export default function DeviceCarousel({
       </div>
 
       {/* Swipe visual tip on mobile */}
-      <p className="text-xs text-muted-foreground mt-4 block md:hidden select-none pointer-events-none opacity-60">
+      <p className="text-xs text-muted-foreground mt-4 block md:hidden select-none pointer-events-none">
         Drag or swipe to rotate screenshots
       </p>
     </div>

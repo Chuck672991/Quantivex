@@ -1,172 +1,381 @@
 'use client';
+import { useReducedMotion } from '@/lib/useReducedMotion';
+import { BRAND, NAV_LINKS, SOCIAL_LINKS, WORK_LINKS } from '@/lib/brand';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import { MoveUpRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
-import ThemeToggle from './ThemeToggle';
+import { useNavHidden } from '@/lib/scroll/navHidden';
+import { useHashScroller } from '@/lib/useAnchorScroll';
+import { useSiteReady } from '@/lib/useSiteReady';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useLenis } from 'lenis/react';
+import { usePathname } from 'next/navigation';
+import {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+    type MouseEvent,
+} from 'react';
+import AnchorLink from './AnchorLink';
+import Button from './Button';
+import Logo from './Logo';
 
-const COLORS = [
-    'bg-yellow-500 text-black',
-    'bg-blue-500 text-white',
-    'bg-teal-500 text-black',
-    'bg-indigo-500 text-white',
-    'bg-emerald-500 text-white',
-    'bg-cyan-500 text-black',
-];
+const SECTION_IDS = NAV_LINKS.map((link) => link.href.split('#')[1]);
 
-const MENU_LINKS = [
-    {
-        name: 'Home',
-        url: '/',
-    },
-    {
-        name: 'About Me',
-        url: '/#about-me',
-    },
-    {
-        name: 'Experience',
-        url: '/#my-experience',
-    },
-    {
-        name: 'Mobile Apps',
-        url: '/mobile-applications',
-    },
-    {
-        name: 'Projects',
-        url: '/#selected-projects',
-    },
-    {
-        name: 'AI Projects',
-        url: '/ai-projects',
-    },
-];
+// Showcase index pages are ink-dark; everything else is the light Arctic surface.
+const DARK_ROUTES = ['/ai-projects', '/mobile-applications'];
+const isDarkRoute = (pathname: string) =>
+    pathname === '/projects' ||
+    DARK_ROUTES.some(
+        (route) => pathname === route || pathname.startsWith(`${route}/`),
+    );
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 const Navbar = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const router = useRouter();
+    const pathname = usePathname();
+    const lenis = useLenis();
+    const scrollToHash = useHashScroller();
+    const ready = useSiteReady();
+    const reduce = useReducedMotion();
+
+    // The menu belongs to the route it was opened on, so navigating closes it
+    const [openedOn, setOpenedOn] = useState<string | null>(null);
+    const [scrolled, setScrolled] = useState(false);
+    const [activeId, setActiveId] = useState<string | null>(null);
+
+    const sentinelRef = useRef<HTMLDivElement>(null);
+    const toggleRef = useRef<HTMLButtonElement>(null);
+    const panelRef = useRef<HTMLDivElement>(null);
+
+    // The scroll opening keeps the bar out of sight until the hole has opened
+    const hiddenByOpening = useNavHidden();
+    const dark = isDarkRoute(pathname);
+    const isHome = pathname === '/';
+
+    const open = openedOn === pathname;
+    const closeMenu = useCallback(() => setOpenedOn(null), []);
+
+    // Frosted bar once the page has moved. A sentinel at the top of the document
+    // reports it, so there is no scroll listener and no layout read per event.
+    useEffect(() => {
+        const sentinel = sentinelRef.current;
+        if (!sentinel || typeof IntersectionObserver === 'undefined') return;
+        const io = new IntersectionObserver(([entry]) =>
+            setScrolled(!entry.isIntersecting),
+        );
+        io.observe(sentinel);
+        return () => io.disconnect();
+    }, []);
+
+    // Highlight the section in view (homepage only)
+    useEffect(() => {
+        if (!isHome) return;
+        const targets = SECTION_IDS.map((id) =>
+            document.getElementById(id),
+        ).filter((el): el is HTMLElement => Boolean(el));
+        if (!targets.length) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) setActiveId(entry.target.id);
+                });
+            },
+            { rootMargin: '-45% 0px -50% 0px' },
+        );
+        targets.forEach((el) => observer.observe(el));
+        return () => observer.disconnect();
+    }, [isHome]);
+
+    // Menu open: freeze page scroll, move focus in, trap Tab, close on Escape
+    useEffect(() => {
+        if (!open) return;
+        lenis?.stop();
+
+        const panel = panelRef.current;
+        const focusables = () =>
+            Array.from(
+                panel?.querySelectorAll<HTMLElement>(
+                    'a[href], button:not([disabled])',
+                ) ?? [],
+            );
+        focusables()[0]?.focus();
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                closeMenu();
+                toggleRef.current?.focus();
+                return;
+            }
+            if (event.key !== 'Tab') return;
+            const items = [toggleRef.current, ...focusables()].filter(
+                (el): el is HTMLElement => Boolean(el),
+            );
+            const first = items[0];
+            const last = items[items.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            lenis?.start();
+        };
+    }, [open, lenis, closeMenu]);
+
+    // Menu links close the menu first. Closing restarts Lenis, which would cancel a
+    // scroll that began at the same moment, so same-page jumps wait a beat.
+    const handleMenuNavigate = (
+        event: MouseEvent<HTMLElement>,
+        href: string,
+    ) => {
+        const [path, hash] = href.split('#');
+        const samePage = Boolean(hash) && (!path || path === pathname);
+        closeMenu();
+        if (
+            !samePage ||
+            event.defaultPrevented ||
+            event.metaKey ||
+            event.ctrlKey
+        )
+            return;
+        event.preventDefault();
+        window.setTimeout(() => scrollToHash(href), 120);
+    };
+
+    const showBackground = scrolled || open;
 
     return (
         <>
-            <div className="sticky top-0 z-[4]">
-                <button
-                    className={cn(
-                        'group size-12 absolute top-5 right-5 md:right-10 z-[2]',
-                    )}
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                    <span
-                        className={cn(
-                            'inline-block w-3/5 h-0.5 bg-foreground rounded-full absolute left-1/2 -translate-x-1/2 top-1/2 duration-300 -translate-y-[5px] ',
-                            {
-                                'rotate-45 -translate-y-1/2': isMenuOpen,
-                                'md:group-hover:rotate-12': !isMenuOpen,
-                            },
-                        )}
-                    ></span>
-                    <span
-                        className={cn(
-                            'inline-block w-3/5 h-0.5 bg-foreground rounded-full absolute left-1/2 -translate-x-1/2 top-1/2 duration-300 translate-y-[5px] ',
-                            {
-                                '-rotate-45 -translate-y-1/2': isMenuOpen,
-                                'md:group-hover:-rotate-12': !isMenuOpen,
-                            },
-                        )}
-                    ></span>
-                </button>
-            </div>
-
             <div
-                className={cn(
-                    'overlay fixed inset-0 z-[2] bg-black/70 transition-all duration-150',
-                    {
-                        'opacity-0 invisible pointer-events-none': !isMenuOpen,
-                    },
-                )}
-                onClick={() => setIsMenuOpen(false)}
-            ></div>
-
-            <div
-                className={cn(
-                    'fixed top-0 right-0 h-[100dvh] w-[500px] max-w-[calc(100vw-3rem)] transform translate-x-full transition-transform duration-700 z-[3] overflow-hidden gap-y-14',
-                    'flex flex-col lg:justify-center py-10',
-                    { 'translate-x-0': isMenuOpen },
-                )}
+                ref={sentinelRef}
+                aria-hidden
+                className="pointer-events-none absolute left-0 top-0 h-6 w-px"
+            />
+            <motion.header
+                initial={reduce ? false : { y: -18, opacity: 0 }}
+                animate={
+                    ready || reduce
+                        ? hiddenByOpening
+                            ? { y: -18, opacity: 0 }
+                            : { y: 0, opacity: 1 }
+                        : undefined
+                }
+                transition={{ duration: 0.8, ease: EASE }}
+                // Out of reach as well as out of sight while the opening plays
+                inert={hiddenByOpening}
+                className={cn('fixed inset-x-0 top-0 z-50', dark && 'dark')}
             >
+                {/* Frosted background lives on its own layer: backdrop-filter on the
+                header itself would trap the fixed mobile panel inside it */}
                 <div
+                    aria-hidden
                     className={cn(
-                        'fixed inset-0 scale-150 translate-x-1/2 rounded-[50%] bg-background-light duration-700 delay-150 z-[-1]',
-                        {
-                            'translate-x-0': isMenuOpen,
-                        },
+                        'absolute inset-0 -z-10 border-b border-transparent transition-all duration-500',
+                        showBackground &&
+                            'perf-glass border-border/70 bg-background/80',
                     )}
-                ></div>
+                />
 
-                <div className="grow flex md:items-center w-full max-w-[300px] mx-8 sm:mx-auto">
-                    <div className="flex gap-10 lg:justify-between max-lg:flex-col w-full">
-                        <div className="max-lg:order-2">
-                            <p className="text-muted-foreground mb-5 md:mb-8">
-                                SOCIAL
-                            </p>
-                            <ul className="space-y-3">
-                                {SOCIAL_LINKS.map((link) => (
-                                    <li key={link.name}>
-                                        <a
-                                            href={link.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="text-lg capitalize hover:underline"
+                <div className="container flex h-[68px] items-center justify-between md:h-[76px]">
+                    <AnchorLink
+                        href="/"
+                        aria-label={`${BRAND.name} home`}
+                        className="relative z-10 rounded-sm"
+                        onClick={() => {
+                            closeMenu();
+                            if (isHome) lenis?.scrollTo(0, { duration: 1.4 });
+                        }}
+                    >
+                        <Logo tone={dark ? 'dark' : 'light'} />
+                    </AnchorLink>
+
+                    <div className="hidden items-center gap-7 md:flex">
+                        <nav
+                            aria-label="Primary"
+                            className="flex items-center gap-6 lg:gap-7"
+                        >
+                            {NAV_LINKS.filter(
+                                (link) => link.name !== 'Contact',
+                            ).map((link) => {
+                                const id = link.href.split('#')[1];
+                                const active = isHome && activeId === id;
+                                return (
+                                    <AnchorLink
+                                        key={link.name}
+                                        href={link.href}
+                                        aria-current={
+                                            active ? 'location' : undefined
+                                        }
+                                        className={cn(
+                                            'relative text-[13px] tracking-tight text-foreground/80 transition-colors hover:text-foreground',
+                                            'after:absolute after:inset-x-0 after:-bottom-1.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100',
+                                            active &&
+                                                'text-foreground after:scale-x-100',
+                                        )}
+                                    >
+                                        {link.name}
+                                    </AnchorLink>
+                                );
+                            })}
+                        </nav>
+                        <Button href="/#contact" variant="outline" size="sm">
+                            Start a project
+                        </Button>
+                    </div>
+
+                    <button
+                        ref={toggleRef}
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls="mobile-menu"
+                        aria-label={open ? 'Close menu' : 'Open menu'}
+                        onClick={() => setOpenedOn(open ? null : pathname)}
+                        className="relative z-10 -mr-2 grid size-11 place-items-center rounded-full md:hidden"
+                    >
+                        <span
+                            className={cn(
+                                'absolute h-px w-[22px] bg-foreground transition-transform duration-300',
+                                open ? 'rotate-45' : '-translate-y-[4px]',
+                            )}
+                        />
+                        <span
+                            className={cn(
+                                'absolute h-px w-[22px] bg-foreground transition-transform duration-300',
+                                open ? '-rotate-45' : 'translate-y-[4px]',
+                            )}
+                        />
+                    </button>
+                </div>
+
+                <AnimatePresence>
+                    {open && (
+                        <motion.div
+                            ref={panelRef}
+                            id="mobile-menu"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label="Menu"
+                            initial={
+                                reduce
+                                    ? { opacity: 0 }
+                                    : { clipPath: 'inset(0 0 100% 0)' }
+                            }
+                            animate={
+                                reduce
+                                    ? { opacity: 1 }
+                                    : { clipPath: 'inset(0 0 0% 0)' }
+                            }
+                            exit={
+                                reduce
+                                    ? { opacity: 0 }
+                                    : { clipPath: 'inset(0 0 100% 0)' }
+                            }
+                            transition={{ duration: 0.55, ease: EASE }}
+                            className="fixed inset-0 z-0 flex flex-col overflow-y-auto bg-background px-6 pb-8 pt-[88px] md:hidden"
+                        >
+                            <div
+                                aria-hidden
+                                className="bg-lattice pointer-events-none absolute inset-0"
+                            />
+                            <nav
+                                aria-label="Mobile"
+                                className="relative flex flex-col"
+                            >
+                                {NAV_LINKS.map((link, i) => (
+                                    <motion.div
+                                        key={link.name}
+                                        initial={
+                                            reduce
+                                                ? false
+                                                : { y: 24, opacity: 0 }
+                                        }
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{
+                                            delay: 0.12 + i * 0.05,
+                                            duration: 0.6,
+                                            ease: EASE,
+                                        }}
+                                    >
+                                        <AnchorLink
+                                            href={link.href}
+                                            onClick={(event) =>
+                                                handleMenuNavigate(
+                                                    event,
+                                                    link.href,
+                                                )
+                                            }
+                                            className="flex items-baseline justify-between border-b border-border py-4 font-display text-[34px] font-medium leading-none tracking-[-0.04em]"
                                         >
                                             {link.name}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="">
-                            <p className="text-muted-foreground mb-5 md:mb-8">
-                                MENU
-                            </p>
-                            <ul className="space-y-3">
-                                {MENU_LINKS.map((link, idx) => (
-                                    <li key={link.name}>
-                                        <button
-                                            onClick={() => {
-                                                router.push(link.url);
-                                                setIsMenuOpen(false);
-                                            }}
-                                            className="group text-xl flex items-center gap-3"
-                                        >
-                                            <span
-                                                className={cn(
-                                                    'size-3.5 bg-white/20 rounded-full flex items-center justify-center group-hover:scale-[200%] transition-all',
-                                                    COLORS[idx],
-                                                )}
-                                            >
-                                                <MoveUpRight
-                                                    size={8}
-                                                    className="scale-0 group-hover:scale-100 transition-all"
-                                                />
+                                            <span className="font-mono text-xs tracking-widest text-muted-foreground">
+                                                0{i + 1}
                                             </span>
-                                            {link.name}
-                                        </button>
-                                    </li>
+                                        </AnchorLink>
+                                    </motion.div>
                                 ))}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                            </nav>
 
-                <div className="w-full max-w-[300px] mx-8 sm:mx-auto">
-                    <p className="text-muted-foreground mb-4">GET IN TOUCH</p>
-                    <a href={`mailto:${GENERAL_INFO.email}`}>
-                        {GENERAL_INFO.email}
-                    </a>
-                    <div className="mt-6">
-                        <ThemeToggle />
-                    </div>
-                </div>
-            </div>
+                            <div className="relative mt-8 grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                                <p className="col-span-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                                    Our work
+                                </p>
+                                {WORK_LINKS.map((link) => (
+                                    <AnchorLink
+                                        key={link.name}
+                                        href={link.href}
+                                        onClick={closeMenu}
+                                        className="text-foreground/85 hover:text-foreground"
+                                    >
+                                        {link.name}
+                                    </AnchorLink>
+                                ))}
+                            </div>
+
+                            <div className="relative mt-auto flex flex-col gap-4 pt-10">
+                                <Button
+                                    href="/#contact"
+                                    variant="ink"
+                                    size="lg"
+                                    arrow
+                                    onClick={(event) =>
+                                        handleMenuNavigate(event, '/#contact')
+                                    }
+                                >
+                                    Start a project
+                                </Button>
+                                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                    <a
+                                        href={`mailto:${BRAND.email}`}
+                                        className="hover:text-foreground"
+                                    >
+                                        {BRAND.email}
+                                    </a>
+                                    <span className="flex gap-4">
+                                        {SOCIAL_LINKS.map((link) => (
+                                            <a
+                                                key={link.name}
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="hover:text-foreground"
+                                            >
+                                                {link.name}
+                                            </a>
+                                        ))}
+                                    </span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.header>
         </>
     );
 };

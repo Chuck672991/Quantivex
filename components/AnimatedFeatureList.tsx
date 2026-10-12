@@ -47,7 +47,7 @@ export default function AnimatedFeatureList({
       animate="visible"
       className="space-y-4"
     >
-      <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+      <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium">
         Key Feature Highlights
       </h3>
       <ul className="space-y-3">
@@ -55,14 +55,12 @@ export default function AnimatedFeatureList({
           <motion.li
             key={`${projectId}-feat-${idx}`}
             variants={itemVariants}
-            className="flex items-start gap-3 text-base text-muted-foreground font-sans leading-relaxed"
+            className="flex items-start gap-3 text-base text-foreground/80 font-sans leading-relaxed"
           >
             <span className="flex-shrink-0 mt-1 size-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
               <Check className="w-3.5 h-3.5 stroke-[2.5]" />
             </span>
-            <span className="text-neutral-300 dark:text-neutral-300 light:text-neutral-700">
-              {feature}
-            </span>
+            <span>{feature}</span>
           </motion.li>
         ))}
       </ul>

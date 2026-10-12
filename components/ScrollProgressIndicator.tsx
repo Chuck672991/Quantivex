@@ -1,36 +1,23 @@
 'use client';
-import React, { useEffect, useRef } from 'react';
+import { useNavHidden } from '@/lib/scroll/navHidden';
+import { cn } from '@/lib/utils';
+import { motion, useScroll } from 'framer-motion';
 
 const ScrollProgressIndicator = () => {
-    const scrollBarRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (scrollBarRef.current) {
-                const { scrollHeight, clientHeight } = document.documentElement;
-                const scrollableHeight = scrollHeight - clientHeight;
-                const scrollY = window.scrollY;
-                const scrollProgress = (scrollY / scrollableHeight) * 100;
-
-                scrollBarRef.current.style.transform = `translateY(-${
-                    100 - scrollProgress
-                }%)`;
-            }
-        };
-
-        handleScroll();
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    // Lenis already eases the scroll, so no spring (a spring keeps a rAF loop alive)
+    const { scrollYProgress } = useScroll();
+    // Comes in with the navbar, once the hero's opening has played
+    const hidden = useNavHidden();
 
     return (
-        <div className="fixed top-[50svh] right-[2%] -translate-y-1/2 w-1.5 h-[100px] rounded-full bg-background-light overflow-hidden">
-            <div
-                className="w-full bg-primary rounded-full h-full"
-                ref={scrollBarRef}
-            ></div>
-        </div>
+        <motion.div
+            aria-hidden
+            style={{ scaleX: scrollYProgress }}
+            className={cn(
+                'fixed inset-x-0 top-0 z-[55] h-[2px] origin-left bg-gradient-to-r from-primary to-accent transition-opacity duration-500',
+                hidden && 'opacity-0',
+            )}
+        />
     );
 };
 

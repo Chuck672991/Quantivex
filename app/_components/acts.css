@@ -1,0 +1,77 @@
+/*
+  Scroll acts for the homepage sections (components use useAct from lib/scroll).
+  A pinned act is a tall "runway" section with a sticky stage inside it: the
+  scrubbed timeline plays over the runway's scroll distance. The runway length
+  is a CSS variable set by the component from lib/scroll/config.ts, so the
+  page height is right before any script runs (no layout jump).
+  Pinned layouts apply only where MEDIA.pinned holds (>= 1024 x 720, motion ok).
+*/
+
+/* ── Services ─────────────────────────────────────────── */
+.sv .sv-meter {
+    display: none;
+}
+
+@media (min-width: 1024px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
+    .sv {
+        height: calc(100svh * (1 + var(--sv-total, 3)));
+    }
+
+    .sv .sv-stage {
+        position: sticky;
+        top: 0;
+        display: flex;
+        align-items: center;
+        height: 100svh;
+        padding-block: 76px 0;
+    }
+
+    .sv .sv-stage > .container {
+        width: 100%;
+    }
+
+    .sv .sv-meter {
+        display: block;
+    }
+
+    /*
+      Pinned: the scroll swaps the active service, so nothing may move when it
+      does. The rows are laid out once (display: contents lifts each row's
+      title into the list grid) and every service's detail panel stacks in the
+      same last cell, which is as tall as the tallest panel. Only colours and
+      opacity change between beats: no layout shift, whatever the content.
+    */
+    .sv .sv-list {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sv .sv-list > li {
+        display: contents;
+    }
+
+    .sv .sv-list > li > span[aria-hidden] {
+        display: none;
+    }
+
+    .sv .sv-list > li > h3 {
+        border-top: 1px solid hsl(var(--border));
+        transition: border-color 0.5s;
+    }
+
+    .sv .sv-list > li > h3:has(button[aria-expanded='true']) {
+        border-top-color: hsl(var(--primary));
+    }
+
+    .sv .sv-list > li > [role='region'] {
+        grid-row: var(--sv-detail-row, 6);
+        grid-column: 1;
+        display: block;
+        border-top: 1px solid hsl(var(--border));
+        transition: opacity 0.45s ease-out;
+    }
+
+    .sv .sv-list > li > [role='region'][inert] {
+        opacity: 0;
+    }
+}

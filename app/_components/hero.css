@@ -1,0 +1,198 @@
+/*
+  Hero opening (ported from the Voxity reference).
+
+  Two layouts share one DOM:
+  - static (compact screens, or reduced motion): an ordinary hero. The strip,
+    composite and photo wrappers are layout-transparent, the lockup and the
+    wall are not rendered.
+  - stage (>= 1024px, motion allowed): the section is a tall scroll runway and
+    .op-stage sticks to the viewport while a scrubbed timeline plays. Geometry
+    is authored at the END pose (the hole thumbnail covers the screen) and the
+    strip is scaled DOWN to the start pose, so the end state stays crisp.
+
+  Keep --op-total in sync with lib/scroll/config.ts (set inline by Hero.tsx).
+*/
+
+.op .op-strip,
+.op .op-composite,
+.op .op-photo {
+    display: contents;
+}
+
+.op .op-word,
+.op .op-cave,
+.op .op-cue,
+.op .op-veil {
+    display: none;
+}
+
+.op .op-hero {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex: 1 1 0%;
+    order: 1; /* copy above the scene on stacked layouts */
+}
+
+/* Hidden until the script poses it (so nothing flashes before the reveal) */
+@media (prefers-reduced-motion: no-preference) {
+    .op [data-hb] {
+        visibility: hidden;
+    }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .op {
+        --op-ink: 222 47% 6%;
+        /* one scroll runway: the stage plus OPENING_TOTAL viewport heights */
+        height: calc(100svh * (1 + var(--op-total, 3) + var(--op-handoff, 0.8)));
+    }
+
+    .op .op-stage {
+        position: sticky;
+        top: 0;
+        display: block;
+        height: 100svh;
+        min-height: 0;
+        --op-w: min(100vw, 160svh);
+        --op-half-diagonal: calc(max(100vw, 100svh) * 0.6);
+        background: hsl(var(--op-ink));
+    }
+
+    @supports (width: hypot(1px, 1px)) {
+        .op .op-stage {
+            --op-half-diagonal: calc(hypot(100vw, 100svh) / 2);
+        }
+    }
+
+    .op .op-strip {
+        display: block;
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        transform-origin: 50% 50%;
+        /* F28 pose: lib/scroll/config.ts ZOOM */
+        transform: scale(0.12204);
+    }
+
+    .op .op-composite {
+        display: block;
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        isolation: isolate;
+        /* The same ink as the stage, so the thumbnail has no visible edge: only
+           the peephole shows. (The hero sits on top of it.) */
+        background: hsl(var(--op-ink));
+    }
+
+    .op .op-photo {
+        display: block;
+        position: absolute;
+        inset: 0;
+        background: hsl(var(--background-light));
+        /* Start pose: slid so the scene's focal point sits under the peephole
+           (the timeline slides it back to rest during the zoom) */
+        transform: translate(var(--op-pan-x, 0), var(--op-pan-y, 0));
+    }
+
+    /* The wall: an ink square centred on the viewport, big enough to cover it
+       at any aspect ratio, with the broken peephole cut out (hole.ts). It scales
+       about its centre, so the hole grows past the corners (CAVE in config.ts).
+       No will-change: it is a vector shape, so it re-rasterises sharp at every
+       scale instead of stretching one raster. */
+    .op .op-cave {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        left: 50%;
+        top: 50%;
+        width: calc(var(--op-half-diagonal) * var(--op-wall-side, 2.2));
+        height: calc(var(--op-half-diagonal) * var(--op-wall-side, 2.2));
+        margin: calc(var(--op-half-diagonal) * var(--op-wall-side, 2.2) / -2) 0 0
+            calc(var(--op-half-diagonal) * var(--op-wall-side, 2.2) / -2);
+        pointer-events: none;
+        transform-origin: 50% 50%;
+        fill: hsl(var(--op-ink));
+        overflow: hidden;
+    }
+
+    .op .op-word {
+        display: block;
+        position: absolute;
+        z-index: 3; /* above the wall, which can overhang the composite */
+        top: 50%;
+        margin: 0;
+        line-height: 1;
+        white-space: nowrap;
+        transform: translateY(-50%);
+        font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+        color: #fff;
+        user-select: none;
+    }
+
+    /* Right edge sits a fixed gap left of the hole thumbnail; left edge a gap right of it */
+    .op .op-welcome {
+        right: calc(100% + var(--op-w) * 0.2);
+        font-size: calc(var(--op-w) * 0.3);
+        font-weight: 400;
+        letter-spacing: -0.045em;
+        color: hsl(210 40% 96% / 0.72);
+    }
+
+    .op .op-brand {
+        left: calc(100% + var(--op-w) * 0.16);
+        font-size: calc(var(--op-w) * 0.5);
+        font-weight: 500;
+        letter-spacing: -0.055em;
+    }
+
+    /* Gathers over the hero while the next block rises over it */
+    .op .op-veil {
+        display: block;
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0;
+        background: hsl(var(--op-ink));
+    }
+
+    .op .op-hero {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        flex: none;
+    }
+
+    /* The reveal is a masked slide-up: the soft wrappers clip too */
+    .op .hb-soft {
+        overflow: hidden;
+        padding: 6px;
+        margin-inline: -6px;
+    }
+
+    .op .op-cue {
+        display: block;
+        position: absolute;
+        z-index: 6;
+        bottom: 5.5vh;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--font-geist-mono), ui-monospace, monospace;
+        font-size: 11px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: hsl(210 40% 96% / 0.55);
+        pointer-events: none;
+    }
+
+    /* The block after the hero (marquee + intro) is pulled up by the hand-off
+       distance, so it slides over the hero while the hero is still pinned. */
+    .op-rise {
+        position: relative;
+        z-index: 3;
+        margin-top: calc(-100svh * var(--op-handoff, 0.8));
+        background: hsl(var(--background));
+    }
+}

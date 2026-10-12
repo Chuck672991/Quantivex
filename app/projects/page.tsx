@@ -1,17 +1,20 @@
 import { Metadata } from 'next';
 import { PROJECTS as ALL_PROJECTS } from '@/lib/data';
+import { BRAND } from '@/lib/brand';
 import WebProjectCard from './_components/WebProjectCard';
 import TransitionLink from '@/components/TransitionLink';
 import { ArrowLeft } from 'lucide-react';
 
+const TITLE = `Web Projects | ${BRAND.name}`;
+const DESCRIPTION = `Full-stack web applications, 3D experiences and interactive platforms built by ${BRAND.name} with Next.js, Three.js, React and GSAP.`;
+
 export const metadata: Metadata = {
-    title: 'Web Projects | Haider Ali',
-    description:
-        'Full-stack web applications, 3D experiences, and interactive platforms built with Next.js, Three.js, React, and GSAP.',
+    // absolute: the root layout's title template would otherwise append the brand twice
+    title: { absolute: TITLE },
+    description: DESCRIPTION,
     openGraph: {
-        title: 'Web Projects | Haider Ali',
-        description:
-            'Full-stack web applications, 3D experiences, and interactive platforms built with Next.js, Three.js, React, and GSAP.',
+        title: TITLE,
+        description: DESCRIPTION,
         type: 'website',
     },
 };
@@ -39,13 +42,14 @@ export default function WebProjectsPage() {
     ).filter(Boolean) as typeof ALL_PROJECTS;
 
     return (
-        <main className="min-h-screen bg-[#0B0C0E]">
-            <div className="max-w-[1200px] mx-auto px-6 lg:px-10 pt-28 pb-24 md:pt-36">
+        // `dark` flips every token inside to the ink surface
+        <div className="dark min-h-screen bg-ink-950 text-foreground">
+            <div className="container pt-28 pb-24 md:pt-36">
 
                 {/* Back link */}
                 <TransitionLink
-                    href="/#selected-projects"
-                    className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors duration-200 mb-14 group"
+                    href="/#work"
+                    className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 mb-14 group"
                 >
                     <ArrowLeft
                         className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-1"
@@ -56,23 +60,24 @@ export default function WebProjectsPage() {
 
                 {/* Hero */}
                 <div className="mb-16 lg:mb-20">
-                    <p className="text-xs font-mono tracking-[0.2em] uppercase text-primary mb-4">
-                        Selected Work
+                    <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-primary mb-4">
+                        Selected work
                     </p>
-                    <h1 className="font-anton text-5xl sm:text-6xl lg:text-7xl uppercase text-foreground leading-none mb-6">
-                        Web Projects
+                    <h1 className="font-display text-[clamp(2.5rem,9vw,5.5rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-foreground mb-6">
+                        Web projects
                     </h1>
-                    <p className="text-muted text-lg leading-relaxed max-w-[580px]">
-                        Full-stack platforms and immersive 3D experiences — built with Next.js,
-                        Three.js, React, and GSAP. Every project shipped end-to-end from architecture
-                        to deployment.
+                    <p className="text-muted-foreground text-lg leading-relaxed max-w-[580px]">
+                        Full-stack platforms and immersive 3D experiences, built with Next.js,
+                        Three.js, React and GSAP. We ship every project end to end, from
+                        architecture to deployment.
                     </p>
 
                     {/* Divider */}
-                    <div className="mt-10 h-px bg-white/[0.07] w-full" />
+                    <div className="mt-10 h-px bg-border w-full" />
                 </div>
 
                 {/* Project grid */}
+                <h2 className="sr-only">All web projects</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-14">
                     {webProjects.map((project) => {
                         const meta = CARD_META[project.slug];
@@ -90,6 +95,6 @@ export default function WebProjectsPage() {
                     })}
                 </div>
             </div>
-        </main>
+        </div>
     );
 }

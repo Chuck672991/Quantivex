@@ -3,18 +3,6 @@ export type Next_Page_Url = string;
 // | __next_route_internal_types__.StaticRoutes
 // | __next_route_internal_types__.DynamicRoutes;
 
-export type Variant =
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'warning'
-    | 'danger'
-    | 'info'
-    | 'light'
-    | 'dark'
-    | 'link'
-    | 'no-color';
-
 export interface IProject {
     title: string;
     year: number;
@@ -76,14 +64,4 @@ export interface IStackGroup {
     /** Marks the AI-focused groups so the UI can flag them. */
     ai?: boolean;
     items: IStackItem[];
-}
-
-export interface ITestimonial {
-    name: string;
-    title: string;
-    company?: string;
-    quote: string;
-    avatar?: string; // public/ path
-    relatedProjectSlug?: string;
-    url?: string;
 }

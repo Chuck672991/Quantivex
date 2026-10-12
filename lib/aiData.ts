@@ -58,7 +58,7 @@ export interface IAIProject {
     /** Internal detail page, if one exists. */
     href?: string;
     liveUrl?: string;
-    /** Employer / product context, only where the CV states it. */
+    /** Product / client context, only where the CV states it. */
     context?: string;
 }
 
@@ -70,11 +70,11 @@ export const AI_PROJECTS: IAIProject[] = [
         tags: ['LLM', 'Speech-to-Text', 'Documentation'],
         teaser: 'GPT-4 and Whisper turn field engineers’ voice notes into documentation.',
         summary:
-            'Led end-to-end development and production release of the MWI AI platform on iOS (Marine Welding & Inspection). An AI documentation pipeline built on GPT-4 and the Whisper API converts voice to text and drafts the documentation, so field engineers spend less time writing it up.',
+            'We led end-to-end development and production release of the MWI AI platform (Marine Welding & Inspection) on iOS. An AI documentation pipeline built on GPT-4 and the Whisper API converts voice to text and drafts the documentation, so field engineers spend less time writing it up.',
         solution:
-            'Voice is transcribed with the Whisper API, then GPT-4 turns it into documentation — a pipeline I architected and shipped.',
+            'Voice is transcribed with the Whisper API, then GPT-4 turns it into documentation — a pipeline we architected and shipped.',
         highlights: [
-            'Led end-to-end development and production release on iOS',
+            'End-to-end development and production release on iOS',
             'AI documentation pipeline on GPT-4 and the Whisper API (voice-to-text)',
             'Built the MWI web portal for client onboarding and service visibility',
             'Paired with a context-aware AI chat assistant for vessel inspection data',
@@ -105,7 +105,7 @@ export const AI_PROJECTS: IAIProject[] = [
         accent: '99, 102, 241',
         href: '/projects/mwi-ai',
         liveUrl: 'https://app.mwi.services/',
-        context: 'TURNUP Technologies',
+        context: 'MWI — Marine Welding & Inspection',
     },
     {
         id: 'vessel-chat',

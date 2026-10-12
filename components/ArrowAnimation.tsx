@@ -1,9 +1,8 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
 import { useRef } from 'react';
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(useGSAP);
 
 const ArrowAnimation = () => {
     const svgRef = useRef<SVGSVGElement>(null);
@@ -22,6 +21,17 @@ const ArrowAnimation = () => {
         });
 
         const tl = gsap.timeline({ repeat: -1 });
+
+        // A looping stroke animation repaints every frame: only run it on screen
+        const svg = svgRef.current;
+        const io =
+            svg && typeof IntersectionObserver !== 'undefined'
+                ? new IntersectionObserver(([entry]) => {
+                      if (entry.isIntersecting) tl.play();
+                      else tl.pause();
+                  })
+                : null;
+        if (svg) io?.observe(svg);
 
         tl.to('#banner-arrow-svg', { autoAlpha: 1, duration: 0.1 });
         tl.to('.svg-arrow', {
@@ -42,6 +52,8 @@ const ArrowAnimation = () => {
             duration: 0,
             autoAlpha: 0,
         });
+
+        return () => io?.disconnect();
     });
 
     return (
@@ -52,7 +64,7 @@ const ArrowAnimation = () => {
             viewBox="0 0 376 111"
             fill="transparent"
             xmlns="http://www.w3.org/2000/svg"
-            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-0"
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-0 h-auto max-w-[92vw]"
             ref={svgRef}
         >
             <path

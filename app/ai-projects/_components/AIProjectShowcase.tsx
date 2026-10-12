@@ -1,14 +1,11 @@
 'use client';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
+import Button from '@/components/Button';
 import TransitionLink from '@/components/TransitionLink';
 import type { IAIProject } from '@/lib/aiData';
 import { cn } from '@/lib/utils';
-import {
-    motion,
-    useReducedMotion,
-    useScroll,
-    useTransform,
-} from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowUpRight, ChevronDown, ChevronRight } from 'lucide-react';
 import { Fragment, useRef, useState } from 'react';
 import AIFlowDiagram from './AIFlowDiagram';
@@ -28,7 +25,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 const AIProjectShowcase = ({ project, index, total }: Props) => {
     const sectionRef = useRef<HTMLElement>(null);
-    const reduce = useReducedMotion() ?? false;
+    const reduce = useReducedMotion();
     const [open, setOpen] = useState(false);
     const { accent, layout } = project;
     const wide = layout === 'wide';
@@ -53,7 +50,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
                 {/* The h2 is the observed mask; its child slides up (see AISection) */}
                 <motion.h2
                     id={`${project.id}-heading`}
-                    className="overflow-hidden pb-[0.08em] font-anton text-[clamp(2.4rem,5.6vw,4.9rem)] uppercase leading-[0.95] text-white"
+                    className="overflow-hidden pb-[0.12em] font-display text-[clamp(2.25rem,4.8vw,4.25rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-foreground"
                     initial={reduce ? false : 'hidden'}
                     whileInView="show"
                     viewport={{ once: true, amount: 0.5 }}
@@ -79,7 +76,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.4 }}
                     transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
-                    className="max-w-[56ch] text-base leading-relaxed text-white/60 md:text-lg"
+                    className="max-w-[56ch] text-base leading-relaxed text-muted-foreground md:text-lg"
                 >
                     {project.summary}
                 </motion.p>
@@ -102,7 +99,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
             </div>
 
             <div className={cn('mt-6', wide && 'lg:col-span-5')}>
-                <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-white/35">
+                <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                     Tech stack
                 </p>
                 <AIProjectTechStack
@@ -122,7 +119,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
                     onClick={() => setOpen((v) => !v)}
                     aria-expanded={open}
                     aria-controls={panelId}
-                    className="group inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                    className="group inline-flex h-10 items-center gap-2 rounded-full border px-5 text-sm font-medium tracking-tight text-foreground transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40"
                     style={{
                         borderColor: `rgba(${accent},0.5)`,
                         background: open ? `rgba(${accent},0.16)` : 'transparent',
@@ -141,7 +138,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
                 {project.href && (
                     <TransitionLink
                         href={project.href}
-                        className="group inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium text-white/70 transition-colors hover:text-white"
+                        className="group inline-flex h-10 items-center gap-1.5 px-3 text-sm font-medium tracking-tight text-foreground transition-colors hover:text-primary"
                     >
                         View project
                         <ArrowUpRight
@@ -151,18 +148,14 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
                     </TransitionLink>
                 )}
                 {project.liveUrl && (
-                    <a
+                    <Button
                         href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium text-white/70 transition-colors hover:text-white"
+                        variant="ghost"
+                        arrow
+                        className="h-10 px-3 text-sm font-medium"
                     >
-                        Live site
-                        <ArrowUpRight
-                            size={15}
-                            className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                        />
-                    </a>
+                        Visit site
+                    </Button>
                 )}
             </div>
 
@@ -194,11 +187,11 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
                             <ChevronRight
                                 aria-hidden
                                 size={14}
-                                className="text-white/25"
+                                className="text-foreground/30"
                             />
                         )}
                         <li
-                            className="rounded-full border px-3 py-1 text-xs text-white/75"
+                            className="rounded-full border px-3 py-1 text-xs text-foreground/80"
                             style={{
                                 borderColor: `rgba(${accent},${step.kind === 'model' ? 0.5 : 0.18})`,
                                 background:
@@ -214,7 +207,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
             </ol>
         </div>
     ) : (
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-5 md:p-7">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-foreground/[0.02] p-5 md:p-7">
             <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0"
@@ -222,7 +215,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
                     background: `radial-gradient(60% 50% at 100% 0%, rgba(${accent},0.16), transparent 70%)`,
                 }}
             />
-            <p className="relative mb-5 font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
+            <p className="relative mb-5 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                 AI architecture
             </p>
             <div className="relative">
@@ -240,7 +233,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
             ref={sectionRef}
             id={project.id}
             aria-labelledby={`${project.id}-heading`}
-            className="relative overflow-hidden border-t border-white/[0.06] py-24 lg:py-36"
+            className="relative overflow-hidden border-t border-border/60 py-24 lg:py-36"
         >
             {/* Ambient light — its side follows the layout */}
             <div
@@ -256,7 +249,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
                 aria-hidden
                 style={{ y: numeralY }}
                 className={cn(
-                    'pointer-events-none absolute top-16 select-none font-anton text-[clamp(14rem,34vw,30rem)] leading-none text-transparent',
+                    'pointer-events-none absolute top-16 select-none font-display text-[clamp(12rem,28vw,24rem)] font-semibold leading-none tracking-[-0.05em] text-transparent',
                     layout === 'split-reverse' ? '-right-6' : '-left-6',
                 )}
             >
@@ -270,7 +263,7 @@ const AIProjectShowcase = ({ project, index, total }: Props) => {
             </motion.span>
 
             <div className="container relative z-10">
-                <div className="mb-10 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/40">
+                <div className="mb-10 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
                     <span style={{ color: ink(accent) }}>
                         {pad(index + 1)} / {pad(total)}
                     </span>

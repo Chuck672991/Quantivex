@@ -70,11 +70,24 @@ interface Props {
     size?: number;
     /** Glyphs render without the tinted tile (used by the marquee). */
     bare?: boolean;
+    /** Flatten a logo to one colour so mixed logo sets read evenly. */
+    mono?: 'ink' | 'white';
     className?: string;
 }
 
+const MONO_FILTER = {
+    ink: '[filter:brightness(0)]',
+    white: '[filter:brightness(0)_invert(1)]',
+} as const;
+
 /** Decorative: the skill name is always rendered next to it. */
-const StackIcon = ({ item, size = 32, bare = false, className }: Props) => {
+const StackIcon = ({
+    item,
+    size = 32,
+    bare = false,
+    mono,
+    className,
+}: Props) => {
     if (item.icon) {
         return (
             <Image
@@ -82,7 +95,11 @@ const StackIcon = ({ item, size = 32, bare = false, className }: Props) => {
                 alt=""
                 width={size}
                 height={size}
-                className={cn('object-contain', className)}
+                className={cn(
+                    'object-contain',
+                    mono && MONO_FILTER[mono],
+                    className,
+                )}
                 style={{ width: size, height: size }}
             />
         );

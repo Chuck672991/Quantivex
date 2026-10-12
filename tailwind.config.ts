@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import { fontFamily } from 'tailwindcss/defaultTheme';
 import tailwindAnimate from 'tailwindcss-animate';
 
 export default {
@@ -14,21 +15,6 @@ export default {
                 background: {
                     DEFAULT: 'hsl(var(--background))',
                     light: 'hsl(var(--background-light))',
-                },
-                olive: {
-                    DEFAULT: '#6B7C35',     // olive green base
-                    light: '#8FA04C',
-                    dark: '#4D5A22',
-                },
-                khaki: {
-                    DEFAULT: '#8B7A55',     // warm khaki / tan
-                    light: '#B0A070',
-                    dark: '#6A5C3C',
-                },
-                sage: {
-                    DEFAULT: '#7A8C6E',     // muted sage green
-                    light: '#9DAF90',
-                    dark: '#5C6C50',
                 },
                 foreground: 'hsl(var(--foreground))',
                 card: {
@@ -62,12 +48,23 @@ export default {
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',
-                chart: {
-                    '1': 'hsl(var(--chart-1))',
-                    '2': 'hsl(var(--chart-2))',
-                    '3': 'hsl(var(--chart-3))',
-                    '4': 'hsl(var(--chart-4))',
-                    '5': 'hsl(var(--chart-5))',
+                // Brand palette: Pure White / Ice Grey / Cobalt / Ink / Slate
+                ice: '#F1F5F9',
+                ink: {
+                    DEFAULT: '#0F172A',
+                    950: '#0A1020',
+                },
+                cobalt: {
+                    50: '#EEF3FF',
+                    100: '#DCE6FF',
+                    200: '#BCCEFF',
+                    300: '#93AEFF',
+                    400: '#6B8CFF',
+                    500: '#3F68F2',
+                    600: '#2A57E6',
+                    DEFAULT: '#1D4ED8',
+                    800: '#1E40AF',
+                    900: '#1E3A8A',
                 },
             },
             borderRadius: {
@@ -76,11 +73,9 @@ export default {
                 sm: 'calc(var(--radius) - 4px)',
             },
             fontFamily: {
-                anton: ['var(--font-anton)'],
-                'roboto-flex': ['var(--font-roboto-flex)'],
-            },
-            padding: {
-                section: '250px',
+                sans: ['var(--font-inter)', ...fontFamily.sans],
+                display: ['var(--font-geist)', ...fontFamily.sans],
+                mono: ['var(--font-geist-mono)', ...fontFamily.mono],
             },
             container: {
                 center: true,

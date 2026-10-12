@@ -37,7 +37,7 @@ const AIProjectList = ({ projects }: Props) => {
         <section
             id="ai-index"
             // overflow-clip, not hidden: hidden would stop the preview panel sticking
-            className="relative overflow-clip border-t border-white/[0.06] py-24 lg:py-32"
+            className="relative overflow-clip border-t border-border/60 py-24 lg:py-32"
         >
             {/* One ambient layer per project; only the active one is visible */}
             {projects.map((p) => (
@@ -56,9 +56,9 @@ const AIProjectList = ({ projects }: Props) => {
 
             <div className="container relative z-10 grid gap-12 lg:grid-cols-12 lg:gap-16">
                 <div className="lg:col-span-7">
-                    <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.22em] text-white/40">
+                    <h2 className="mb-8 font-mono text-[11px] font-normal uppercase tracking-[0.22em] text-muted-foreground">
                         Index · {pad(projects.length)} systems
-                    </p>
+                    </h2>
 
                     <ul>
                         {projects.map((p, i) => {
@@ -73,7 +73,7 @@ const AIProjectList = ({ projects }: Props) => {
                                                 setActiveId(p.id);
                                         }}
                                         onFocus={() => setActiveId(p.id)}
-                                        className="group relative grid grid-cols-[auto_1fr_auto] items-start gap-x-4 border-t border-white/10 py-6 focus-visible:outline-none md:gap-x-6 md:py-8"
+                                        className="group relative grid grid-cols-[auto_1fr_auto] items-start gap-x-4 border-t border-border py-6 focus-visible:outline-none md:gap-x-6 md:py-8"
                                     >
                                         <span
                                             aria-hidden
@@ -93,7 +93,7 @@ const AIProjectList = ({ projects }: Props) => {
                                                 'pt-1 font-mono text-sm tracking-[0.2em] transition-[transform,color] duration-300 md:pt-2',
                                                 active
                                                     ? 'translate-x-1'
-                                                    : 'text-white/30',
+                                                    : 'text-foreground/40',
                                             )}
                                             style={
                                                 active
@@ -109,16 +109,16 @@ const AIProjectList = ({ projects }: Props) => {
                                         <div className="min-w-0">
                                             <h3
                                                 className={cn(
-                                                    'font-anton text-3xl uppercase leading-none transition-colors duration-300 md:text-5xl',
+                                                    'font-display text-2xl font-semibold leading-[1.02] tracking-[-0.035em] transition-colors duration-300 sm:text-3xl md:text-4xl',
                                                     // no hover on touch: keep every title at full strength there
                                                     active
-                                                        ? 'text-white'
-                                                        : 'text-white/35 max-lg:text-white',
+                                                        ? 'text-foreground'
+                                                        : 'text-foreground/40 max-lg:text-foreground',
                                                 )}
                                             >
                                                 {p.title}
                                             </h3>
-                                            <p className="mt-2.5 text-sm text-white/45">
+                                            <p className="mt-2.5 text-sm text-muted-foreground">
                                                 {p.category}
                                             </p>
 
@@ -146,7 +146,7 @@ const AIProjectList = ({ projects }: Props) => {
                                                             </li>
                                                         ))}
                                                     </ul>
-                                                    <p className="mt-3 text-xs leading-relaxed text-white/40">
+                                                    <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
                                                         {p.technologies
                                                             .slice(0, 5)
                                                             .join(' · ')}
@@ -160,15 +160,15 @@ const AIProjectList = ({ projects }: Props) => {
                                             className={cn(
                                                 'mt-1 size-5 transition-all duration-300 md:mt-2',
                                                 active
-                                                    ? 'translate-x-0 translate-y-0 text-white opacity-100'
-                                                    : '-translate-x-1 translate-y-1 text-white opacity-0 max-lg:opacity-40',
+                                                    ? 'translate-x-0 translate-y-0 text-foreground opacity-100'
+                                                    : '-translate-x-1 translate-y-1 text-foreground opacity-0 max-lg:opacity-40',
                                             )}
                                         />
                                     </a>
                                 </li>
                             );
                         })}
-                        <li className="border-t border-white/10" aria-hidden />
+                        <li className="border-t border-border" aria-hidden />
                     </ul>
                 </div>
 

@@ -1,16 +1,14 @@
 'use client';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
+import Button from '@/components/Button';
 import TransitionLink from '@/components/TransitionLink';
 import { AI_AGENT_LOOP, AI_PROJECTS } from '@/lib/aiData';
 import { cn } from '@/lib/utils';
-import {
-    motion,
-    useReducedMotion,
-    useScroll,
-    useTransform,
-} from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useLenis } from 'lenis/react';
 import { ArrowDown, ArrowLeft } from 'lucide-react';
+import { useAnimGate } from '@/lib/useAnimGate';
 import { useRef } from 'react';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -22,6 +20,8 @@ const CAPABILITIES = [
     'n8n Automation',
 ];
 
+// Masked line reveal. The inner span carries the bottom padding so descenders
+// (and the gradient clip, which only paints inside its own box) are not cut off.
 const Line = ({
     children,
     delay,
@@ -33,9 +33,9 @@ const Line = ({
     className?: string;
     reduce: boolean;
 }) => (
-    <span className="block overflow-hidden pb-[0.1em]">
+    <span className="block overflow-hidden">
         <motion.span
-            className={cn('block', className)}
+            className={cn('block pb-[0.12em]', className)}
             initial={reduce ? false : { y: '110%' }}
             animate={{ y: 0 }}
             transition={{ duration: 1, ease: EASE, delay }}
@@ -47,7 +47,8 @@ const Line = ({
 
 const AIProjectHero = () => {
     const ref = useRef<HTMLElement>(null);
-    const reduce = useReducedMotion() ?? false;
+    useAnimGate(ref);
+    const reduce = useReducedMotion();
     const lenis = useLenis();
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -68,18 +69,14 @@ const AIProjectHero = () => {
             ref={ref}
             className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pb-14 pt-28"
         >
-            {/* Grid, masked so it fades out away from the headline */}
+            {/* Grid that fades out away from the headline (gradient overlay, no mask) */}
             <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0 opacity-60"
                 style={{
                     backgroundImage:
-                        'linear-gradient(to right,rgba(255,255,255,0.035) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.035) 1px,transparent 1px)',
+                        'linear-gradient(to right,hsl(var(--foreground) / 0.04) 1px,transparent 1px),linear-gradient(to bottom,hsl(var(--foreground) / 0.04) 1px,transparent 1px)',
                     backgroundSize: '56px 56px',
-                    maskImage:
-                        'radial-gradient(ellipse 70% 60% at 30% 40%, #000 30%, transparent 100%)',
-                    WebkitMaskImage:
-                        'radial-gradient(ellipse 70% 60% at 30% 40%, #000 30%, transparent 100%)',
                 }}
             />
             <div
@@ -87,15 +84,24 @@ const AIProjectHero = () => {
                 className="pointer-events-none absolute inset-0"
                 style={{
                     background:
-                        'radial-gradient(40% 45% at 18% 30%, rgba(34,211,238,0.13), transparent 70%), radial-gradient(38% 42% at 88% 22%, rgba(99,102,241,0.16), transparent 70%)',
+                        'radial-gradient(ellipse 70% 60% at 30% 40%, transparent 30%, hsl(var(--background)) 100%)',
+                }}
+            />
+            {/* Cobalt and periwinkle light, the brand pair on ink */}
+            <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0"
+                style={{
+                    background:
+                        'radial-gradient(40% 45% at 18% 30%, hsl(var(--primary) / 0.14), transparent 70%), radial-gradient(38% 42% at 88% 22%, hsl(var(--accent) / 0.12), transparent 70%)',
                 }}
             />
 
-            {/* Outlined count — the number of systems below */}
+            {/* Outlined count: the number of systems below */}
             <span
                 aria-hidden
-                className="pointer-events-none absolute -right-4 bottom-16 hidden select-none font-anton text-[clamp(14rem,30vw,28rem)] leading-none text-transparent md:block"
-                style={{ WebkitTextStroke: '1px rgba(255,255,255,0.07)' }}
+                className="pointer-events-none absolute -right-4 bottom-16 hidden select-none font-display text-[clamp(12rem,24vw,22rem)] font-semibold leading-none tracking-[-0.05em] text-transparent md:block"
+                style={{ WebkitTextStroke: '1px hsl(var(--foreground) / 0.09)' }}
             >
                 {String(AI_PROJECTS.length).padStart(2, '0')}
             </span>
@@ -106,7 +112,7 @@ const AIProjectHero = () => {
             >
                 <TransitionLink
                     href="/#ai-systems"
-                    className="group mb-12 inline-flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white"
+                    className="group mb-12 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                     <ArrowLeft
                         className="size-4 transition-transform duration-200 group-hover:-translate-x-1"
@@ -119,16 +125,18 @@ const AIProjectHero = () => {
                     initial={reduce ? false : { opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: EASE }}
-                    className="mb-6 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.24em] text-cyan-300/80"
+                    className="mb-6 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-primary"
                 >
                     <span className="relative flex size-2">
-                        <span className="absolute inline-flex size-full animate-ping rounded-full bg-cyan-300 opacity-60 motion-reduce:animate-none" />
-                        <span className="relative inline-flex size-2 rounded-full bg-cyan-300" />
+                        <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60 motion-reduce:animate-none" />
+                        <span className="relative inline-flex size-2 rounded-full bg-primary" />
                     </span>
                     AI / Intelligent Systems
                 </motion.p>
 
-                <h1 className="font-anton text-[clamp(2.1rem,8.4vw,7rem)] uppercase leading-[0.92] text-white">
+                {/* Geist is far wider than Anton: the longest line ("products with
+                    modern") stays inside 360px at the 1.75rem floor. */}
+                <h1 className="font-display text-[clamp(1.75rem,7.2vw,6rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-foreground">
                     <Line reduce={reduce} delay={0.1}>
                         Building intelligent
                     </Line>
@@ -144,13 +152,13 @@ const AIProjectHero = () => {
                     initial={reduce ? false : { opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: EASE, delay: 0.55 }}
-                    className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-white/55 md:text-base"
+                    className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground md:text-base"
                     aria-label="Focus areas"
                 >
                     {CAPABILITIES.map((c, i) => (
                         <li key={c} className="flex items-center gap-3">
                             {i > 0 && (
-                                <span aria-hidden className="text-white/20">
+                                <span aria-hidden className="text-foreground/20">
                                     •
                                 </span>
                             )}
@@ -165,52 +173,49 @@ const AIProjectHero = () => {
                     transition={{ duration: 0.8, ease: EASE, delay: 0.7 }}
                     className="mt-10"
                 >
-                    <button
-                        type="button"
-                        onClick={explore}
-                        className="group inline-flex items-center gap-2 bg-primary px-6 py-3.5 font-anton text-sm uppercase tracking-wider text-primary-foreground transition-colors duration-300 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
-                    >
-                        Explore AI Work
+                    <Button variant="cobalt" size="lg" onClick={explore}>
+                        Explore AI work
                         <ArrowDown
-                            size={18}
-                            className="transition-transform duration-200 group-hover:translate-y-0.5"
+                            size={16}
+                            aria-hidden
+                            className="transition-transform duration-300 group-hover:translate-y-0.5"
                         />
-                    </button>
+                    </Button>
                 </motion.div>
             </motion.div>
 
-            {/* The CV's AI skills in the order a request meets them */}
+            {/* The AI skills in the order a request meets them */}
             <motion.div
                 initial={reduce ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 1 }}
                 className="container relative z-10 mt-16 hidden md:block"
             >
-                <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.24em] text-white/35">
-                    The pieces I build agents from
+                <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                    The pieces we build agents from
                 </p>
                 <ol className="relative grid grid-cols-5">
                     <span
                         aria-hidden
-                        className="absolute left-3 right-3 top-3 h-px overflow-hidden bg-white/10"
+                        className="absolute left-3 right-3 top-3 h-px overflow-hidden bg-foreground/10"
                     >
                         <i
                             className="ai-pulse-x absolute left-0 top-0 h-full w-1/5"
                             style={{
                                 background:
-                                    'linear-gradient(to right, transparent, rgb(34,211,238), transparent)',
+                                    'linear-gradient(to right, transparent, hsl(var(--primary)), transparent)',
                             }}
                         />
                     </span>
                     {AI_AGENT_LOOP.map((step, i) => (
                         <li key={step.label} className="relative pr-4">
-                            <span className="relative flex size-6 items-center justify-center rounded-full border border-cyan-300/50 bg-[#0B0C0E] font-mono text-[10px] text-cyan-300">
+                            <span className="relative flex size-6 items-center justify-center rounded-full border border-primary/50 bg-ink-950 font-mono text-[10px] text-primary">
                                 {i + 1}
                             </span>
-                            <p className="mt-3 text-sm font-semibold text-white">
+                            <p className="mt-3 text-sm font-semibold text-foreground">
                                 {step.label}
                             </p>
-                            <p className="mt-0.5 text-xs text-white/45">
+                            <p className="mt-0.5 text-xs text-muted-foreground">
                                 {step.note}
                             </p>
                         </li>

@@ -1,223 +1,172 @@
 'use client';
+import { markSiteReady } from '@/lib/useSiteReady';
+import { BRAND } from '@/lib/brand';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLenis } from 'lenis/react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { LogoMark } from './Logo';
 
 gsap.registerPlugin(useGSAP);
 
+const STORAGE_KEY = 'quantivex-preloader';
+
+const noopSubscribe = () => () => {};
+
+// Decided once per page load: a visitor who has already seen the intro this
+// session, or who prefers reduced motion, skips it.
+let skipIntro: boolean | null = null;
+const shouldSkipIntro = () => {
+    if (skipIntro !== null) return skipIntro;
+    const reduce = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+    ).matches;
+    let seen = false;
+    try {
+        seen = window.sessionStorage.getItem(STORAGE_KEY) === '1';
+    } catch {
+        // storage blocked: just play the intro
+    }
+    skipIntro = reduce || seen;
+    return skipIntro;
+};
+
+/**
+ * First-visit intro: the cube mark and wordmark resolve over a cobalt progress
+ * line, then two panels lift away. It runs once per browser session and is
+ * skipped entirely for reduced-motion visitors.
+ */
 const Preloader = () => {
-    const preloaderRef = useRef<HTMLDivElement>(null);
-    const desktopRef = useRef<HTMLDivElement>(null);
-    const mobileRef = useRef<HTMLDivElement>(null);
-    const progressRef = useRef<HTMLDivElement>(null);
-    const percentRef = useRef<HTMLSpanElement>(null);
-
-    const [isVisible, setIsVisible] = useState(true);
-
-    const shouldReduceMotion = useMemo(() => {
-        if (typeof window === 'undefined') return false
-        return Boolean(
-            window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches,
-        )
-    }, []);
+    const rootRef = useRef<HTMLDivElement>(null);
+    const [done, setDone] = useState(false);
+    const lenis = useLenis();
+    // null while hydrating (the overlay is already in the server HTML)
+    const skip = useSyncExternalStore(
+        noopSubscribe,
+        shouldSkipIntro,
+        () => null,
+    );
 
     useEffect(() => {
-        if (typeof window === 'undefined') return
-
-        const alreadyShown = window.sessionStorage.getItem('portfolio-preloader') === '1'
-        if (alreadyShown) {
-            setIsVisible(false)
-            return
+        if (skip === null) return;
+        if (skip) {
+            markSiteReady();
+            return;
         }
+        try {
+            window.sessionStorage.setItem(STORAGE_KEY, '1');
+        } catch {
+            // storage blocked: the intro will simply play again next visit
+        }
+    }, [skip]);
 
-        window.sessionStorage.setItem('portfolio-preloader', '1')
-    }, []);
+    // The page must not scroll under the intro (Lenis scrolls programmatically,
+    // which overflow:hidden on the body does not stop)
+    useEffect(() => {
+        if (skip !== false || done || !lenis) return;
+        lenis.stop();
+        return () => lenis.start();
+    }, [skip, done, lenis]);
 
     useGSAP(
         () => {
-            if (!isVisible) return
-            if (!preloaderRef.current) return
+            if (skip !== false || done || !rootRef.current) return;
 
-            const previousOverflow = document.body.style.overflow
-            document.body.style.overflow = 'hidden'
+            const previousOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
 
-            const counter = { value: 0 }
+            const finish = () => {
+                document.body.style.overflow = previousOverflow;
+                markSiteReady();
+                setDone(true);
+            };
 
-            const handleDone = () => {
-                document.body.style.overflow = previousOverflow
-                setIsVisible(false)
-            }
+            const letters = gsap.utils.toArray<HTMLElement>('.pl-letter');
+            gsap.set('.pl-bar', { scaleX: 0, transformOrigin: 'left center' });
+            gsap.set('.pl-mark', { autoAlpha: 0, y: 14, scale: 0.9 });
+            gsap.set(letters, { yPercent: 110 });
 
-            if (shouldReduceMotion) {
-                if (percentRef.current) percentRef.current.textContent = '100'
-                if (progressRef.current)
-                    gsap.set(progressRef.current, { scaleX: 1, transformOrigin: 'left' })
-                gsap.set(preloaderRef.current, { autoAlpha: 0 })
-                handleDone()
-                return
-            }
-
-            gsap.set(preloaderRef.current, { autoAlpha: 1, yPercent: 0 })
-
-            const mm = gsap.matchMedia()
-
-            mm.add(
-                {
-                    isDesktop: '(min-width: 768px)',
-                    isMobile: '(max-width: 767px)',
-                },
-                (context) => {
-                    const conditions = context.conditions as
-                        | { isDesktop?: boolean; isMobile?: boolean }
-                        | undefined
-
-                    if (conditions?.isDesktop) {
-                        const tl = gsap.timeline({
-                            defaults: { ease: 'power1.inOut' },
-                            onComplete: handleDone,
-                        })
-
-                        tl.to('.desktop-preloader .name-text span', {
-                            y: 0,
-                            stagger: 0.05,
-                            duration: 0.2,
-                        })
-                        tl.to('.desktop-preloader .preloader-item', {
-                            delay: 1,
-                            y: '100%',
-                            duration: 0.5,
-                            stagger: 0.1,
-                        })
-                            .to(
-                                '.desktop-preloader .name-text span',
-                                { autoAlpha: 0 },
-                                '<0.5',
-                            )
-                            .to(preloaderRef.current, { autoAlpha: 0 }, '<1')
-
-                        return
-                    }
-
-                    // Mobile
-                    gsap.set(progressRef.current, {
-                        scaleX: 0,
-                        transformOrigin: 'left',
-                    })
-
-                    const tl = gsap.timeline({
-                        defaults: { ease: 'power2.inOut' },
-                        onComplete: handleDone,
-                    })
-
-                    tl.to(counter, {
-                        value: 100,
-                        duration: 1.4,
-                        ease: 'power1.out',
-                        onUpdate: () => {
-                            if (!percentRef.current) return
-                            percentRef.current.textContent = String(
-                                Math.round(counter.value),
-                            )
-                        },
-                    })
-                        .to(
-                            progressRef.current,
-                            {
-                                scaleX: 1,
-                                duration: 1.4,
-                                ease: 'power1.out',
-                            },
-                            0,
-                        )
-                        .to(
-                            preloaderRef.current,
-                            { yPercent: -100, duration: 0.9 },
-                            '+=0.1',
-                        )
-                        .set(preloaderRef.current, { autoAlpha: 0 })
-                },
-            )
+            const tl = gsap.timeline({ onComplete: finish });
+            tl.to('.pl-mark', {
+                autoAlpha: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.6,
+                ease: 'power3.out',
+            })
+                .to(
+                    letters,
+                    {
+                        yPercent: 0,
+                        duration: 0.55,
+                        stagger: 0.035,
+                        ease: 'power3.out',
+                    },
+                    '-=0.3',
+                )
+                .to(
+                    '.pl-bar',
+                    { scaleX: 1, duration: 0.85, ease: 'power2.inOut' },
+                    0.1,
+                )
+                .to('.pl-content', {
+                    autoAlpha: 0,
+                    y: -10,
+                    duration: 0.3,
+                    delay: 0.15,
+                    ease: 'power2.in',
+                })
+                .add(() => markSiteReady())
+                .to('.pl-panel-2', {
+                    yPercent: -100,
+                    duration: 0.75,
+                    ease: 'power3.inOut',
+                })
+                .to(
+                    '.pl-panel-1',
+                    { yPercent: -100, duration: 0.75, ease: 'power3.inOut' },
+                    '-=0.62',
+                );
 
             return () => {
-                mm.revert()
-                document.body.style.overflow = previousOverflow
-            }
+                tl.kill();
+                document.body.style.overflow = previousOverflow;
+            };
         },
-        { scope: preloaderRef, dependencies: [isVisible, shouldReduceMotion] },
+        { scope: rootRef, dependencies: [skip] },
     );
 
-    if (!isVisible) return null
+    if (skip === true || done) return null;
 
     return (
         <div
-            ref={preloaderRef}
-            className="fixed inset-0 z-[6]"
+            ref={rootRef}
+            className="fixed inset-0 z-[70]"
             role="status"
             aria-live="polite"
-            aria-label="Loading"
+            aria-label={`Loading ${BRAND.name}`}
         >
-            {/* Desktop preloader (previous animation) */}
-            <div
-                ref={desktopRef}
-                className="desktop-preloader hidden md:flex h-full"
-                aria-hidden
-            >
-                <div className="preloader-item h-full w-[10%] bg-[#EEF0E5]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#D8DDCA]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#C2CAAE]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#A9B48E]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#8FA06E]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#7A8C5A]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#637846]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#4E6035]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#3B4D27]"></div>
-                <div className="preloader-item h-full w-[10%] bg-[#252F17]"></div>
-
-                <p className="name-text flex text-[#EEF0E5] text-[11vw] sm:text-[14vw] lg:text-[160px] font-anton text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 leading-none overflow-hidden">
-                    <span className="inline-block translate-y-full">H</span>
-                    <span className="inline-block translate-y-full">A</span>
-                    <span className="inline-block translate-y-full">I</span>
-                    <span className="inline-block translate-y-full">D</span>
-                    <span className="inline-block translate-y-full">E</span>
-                    <span className="inline-block translate-y-full">R</span>
-                    <span className="inline-block translate-y-full">A</span>
-                    <span className="inline-block translate-y-full">L</span>
-                    <span className="inline-block translate-y-full">I</span>
-                </p>
-            </div>
-
-            {/* Mobile preloader (new animation) */}
-            <div
-                ref={mobileRef}
-                className="mobile-preloader md:hidden h-full bg-background text-foreground"
-            >
-                <div className="container h-full py-10 flex flex-col justify-between">
-                    <div className="flex items-start justify-between gap-6">
-                        <p className="text-xs sm:text-sm tracking-[0.32em] uppercase text-muted-foreground">
-                            Loading
-                        </p>
-                        <p className="text-xs sm:text-sm tracking-[0.32em] uppercase text-muted-foreground text-right">
-                            Portfolio
-                        </p>
-                    </div>
-
-                    <div className="flex items-end justify-between gap-6">
-                        <p className="font-anton leading-none text-[18vw]">
-                            <span ref={percentRef}>0</span>
-                            <span className="text-primary">%</span>
-                        </p>
-
-                        <div className="w-[46%] max-w-[520px] pb-4">
-                            <div className="h-[2px] w-full bg-border overflow-hidden">
-                                <div
-                                    ref={progressRef}
-                                    className="h-full w-full bg-primary"
-                                />
-                            </div>
-                            <p className="mt-3 text-xs tracking-[0.32em] uppercase text-muted-foreground text-right">
-                                Haider Ali
-                            </p>
-                        </div>
+            <div className="pl-panel-2 absolute inset-0 bg-primary" />
+            <div className="pl-panel-1 absolute inset-0 bg-background-light bg-lattice">
+                <div className="pl-content flex h-full flex-col items-center justify-center gap-6">
+                    <LogoMark size={56} className="pl-mark opacity-0" />
+                    <p
+                        className="flex font-display text-xl font-semibold uppercase leading-none tracking-[0.3em] text-ink sm:text-2xl"
+                        aria-hidden
+                    >
+                        {BRAND.name.split('').map((letter, i) => (
+                            <span
+                                key={i}
+                                className="inline-block overflow-hidden pb-1"
+                            >
+                                <span className="pl-letter inline-block translate-y-[110%]">
+                                    {letter}
+                                </span>
+                            </span>
+                        ))}
+                    </p>
+                    <div className="h-px w-40 overflow-hidden bg-ink/10 sm:w-56">
+                        <div className="pl-bar h-full w-full origin-left scale-x-0 bg-primary" />
                     </div>
                 </div>
             </div>

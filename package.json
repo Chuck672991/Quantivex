@@ -1,12 +1,12 @@
 {
-    "name": "new-portfolio",
+    "name": "quantivex",
     "version": "0.1.0",
     "private": true,
     "scripts": {
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint",
+        "lint": "eslint .",
         "svgr:icons": "svgr --title-prop --no-dimensions --typescript -d components/icons -- components/icons/svgs"
     },
     "dependencies": {

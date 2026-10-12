@@ -1,13 +1,9 @@
 'use client';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
 import DeviceFrame from '@/components/DeviceFrame';
 import { cn } from '@/lib/utils';
-import {
-    motion,
-    useReducedMotion,
-    useScroll,
-    useTransform,
-} from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { useTilt } from './useTilt';
 
@@ -16,6 +12,8 @@ interface Props {
     title: string;
     /** "r, g, b" */
     accent: string;
+    /** Scroll-linked drift of the phones. Off where several instances share a page. */
+    parallax?: boolean;
 }
 
 // Static classes so Tailwind sees them. Offsets are tighter on small screens
@@ -27,23 +25,28 @@ const SIDE = [
 ] as const;
 
 /** Three real app screens in a fan, with scroll parallax and pointer tilt. */
-const AIProjectPhones = ({ screenshots, title, accent }: Props) => {
+const AIProjectPhones = ({
+    screenshots,
+    title,
+    accent,
+    parallax = true,
+}: Props) => {
     const ref = useRef<HTMLDivElement>(null);
     const reduce = useReducedMotion();
     const tilt = useTilt(4);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ['start end', 'end start'],
-    });
+    // Without parallax this tracks the shared page scroll instead of measuring the element
+    const { scrollYProgress } = useScroll(
+        parallax ? { target: ref, offset: ['start end', 'end start'] } : {},
+    );
     const sideY = useTransform(
         scrollYProgress,
         [0, 1],
-        reduce ? [0, 0] : [36, -36],
+        reduce || !parallax ? [0, 0] : [36, -36],
     );
     const midY = useTransform(
         scrollYProgress,
         [0, 1],
-        reduce ? [0, 0] : [-14, 14],
+        reduce || !parallax ? [0, 0] : [-14, 14],
     );
 
     // Order the fan left / centre / right, centre being the hero screen.

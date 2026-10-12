@@ -1,12 +1,13 @@
 'use client';
 import parse from 'html-react-parser';
 import ArrowAnimation from '@/components/ArrowAnimation';
+import Button from '@/components/Button';
 import TransitionLink from '@/components/TransitionLink';
 import { IProject } from '@/types';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
-import { ArrowLeft, ArrowRight, ExternalLink, Github } from 'lucide-react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { useRef } from 'react';
 
 interface Props {
@@ -17,6 +18,10 @@ interface Props {
 }
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+// Section labels: small technical caps, like every other eyebrow on the site
+const LABEL =
+    'mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground';
 
 const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Props) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -48,7 +53,6 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
             if (window.innerWidth < 992) return;
 
             gsap.to('#info', {
-                filter: 'blur(3px)',
                 autoAlpha: 0,
                 scale: 0.9,
                 // position: 'sticky',
@@ -88,82 +92,75 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
     );
 
     return (
-        <section className="pt-5 pb-14 px-1">
+        // Light Arctic page: the global navbar is fixed, so content starts at pt-28
+        <section className="pt-28 pb-20 px-1">
             <div className="container" ref={containerRef}>
                 <TransitionLink
                     back
                     href="/"
-                    className="mb-16 inline-flex gap-2 items-center group h-12"
+                    className="mb-12 inline-flex gap-2 items-center group h-12 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                    <ArrowLeft className="group-hover:-translate-x-1 group-hover:text-primary transition-all duration-300" />
+                    <ArrowLeft className="size-4 group-hover:-translate-x-1 group-hover:text-primary transition-all duration-300" />
                     Back
                 </TransitionLink>
 
                 <div
-                    className="top-0 min-h-[calc(100svh-100px)] flex"
+                    className="top-0 min-h-[calc(100svh-7rem)] flex"
                     id="info"
                 >
                     <div className="relative w-full">
-                        <div className="flex flex-wrap items-start gap-4 mx-auto mb-10 max-w-[635px] w-full">
-                            <h1 className="fade-in-later opacity-0 text-3xl sm:text-4xl md:text-[60px] leading-tight font-anton flex-1">
+                        <div className="flex flex-wrap items-start gap-x-6 gap-y-5 mx-auto mb-10 max-w-[635px] w-full">
+                            {/* Geist is wider than the old display face, so the cap is lower */}
+                            <h1 className="fade-in-later opacity-0 min-w-0 flex-1 basis-[16rem] font-display text-[clamp(2rem,6vw,3.25rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-foreground text-balance">
                                 {project.title}
                             </h1>
 
-                            <div className="fade-in-later opacity-0 flex gap-2">
-                                {project.sourceCode && (
-                                    <a
-                                        href={project.sourceCode}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                        className="hover:text-primary"
-                                    >
-                                        <Github size={30} />
-                                    </a>
-                                )}
-                                {project.liveUrl && (
-                                    <a
-                                        href={project.liveUrl}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                        className="hover:text-primary"
-                                    >
-                                        <ExternalLink size={30} />
-                                    </a>
-                                )}
-                            </div>
+                            {(project.liveUrl || project.sourceCode) && (
+                                <div className="fade-in-later opacity-0 flex flex-wrap gap-2">
+                                    {project.liveUrl && (
+                                        <Button
+                                            href={project.liveUrl}
+                                            variant="ink"
+                                            arrow
+                                        >
+                                            Visit site
+                                        </Button>
+                                    )}
+                                    {project.sourceCode && (
+                                        <Button
+                                            href={project.sourceCode}
+                                            variant="outline"
+                                        >
+                                            Source code
+                                        </Button>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         <div className="max-w-[635px] w-full space-y-7 pb-20 mx-auto">
                             <div className="fade-in-later">
-                                <p className="text-muted-foreground font-anton mb-3">
-                                    Year
-                                </p>
+                                <p className={LABEL}>Year</p>
 
                                 <div className="text-lg">{project.year}</div>
                             </div>
                             <div className="fade-in-later">
-                                <p className="text-muted-foreground font-anton mb-3">
-                                    Tech & Technique
-                                </p>
+                                <p className={LABEL}>Technology</p>
 
                                 <div className="text-lg">
                                     {project.techStack.join(', ')}
                                 </div>
                             </div>
                             <div className="fade-in-later">
-                                <p className="text-muted-foreground font-anton mb-3">
-                                    Description
-                                </p>
+                                <p className={LABEL}>Description</p>
 
-                                <div className="text-lg prose-xl markdown-text">
+                                <div className="text-lg prose-xl markdown-text [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_a]:transition-colors [&_a:hover]:text-cobalt-800">
                                     {parse(project.description)}
                                 </div>
                             </div>
                             {project.role && (
                                 <div className="fade-in-later">
-                                    <p className="text-muted-foreground font-anton mb-3">
-                                        My Role
-                                    </p>
+                                    <p className={LABEL}>Engineering scope</p>
 
                                     <div className="text-lg">
                                         {parse(project.role)}
@@ -183,7 +180,7 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
                     {project.images.map((image) => (
                         <div
                             key={image}
-                            className="group relative w-full aspect-[750/400] bg-background-light"
+                            className="group relative w-full aspect-[750/400] overflow-hidden rounded-2xl border border-border bg-background-light"
                             style={{
                                 backgroundImage: `url(${image})`,
                                 backgroundSize: 'cover',
@@ -194,18 +191,20 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
                             <a
                                 href={image}
                                 target="_blank"
-                                className="absolute top-4 right-4 bg-background/70 text-foreground size-12 inline-flex justify-center items-center transition-all opacity-0 hover:bg-primary hover:text-primary-foreground group-hover:opacity-100"
+                                rel="noopener noreferrer"
+                                aria-label="Open image in a new tab"
+                                className="absolute top-4 right-4 bg-background/80 text-foreground size-12 rounded-full inline-flex justify-center items-center transition-all opacity-0 hover:bg-primary hover:text-primary-foreground focus-visible:opacity-100 group-hover:opacity-100"
                             >
-                                <ExternalLink />
+                                <ExternalLink aria-hidden />
                             </a>
                         </div>
                     ))}
                 </div>
 
-                <div className="fade-in-later max-w-[900px] mx-auto mt-14 border border-border">
+                <div className="fade-in-later max-w-[900px] mx-auto mt-14 overflow-hidden rounded-2xl border border-border">
                     <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
                         <div className="p-7 md:p-10">
-                            <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mb-3">
+                            <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-[0.2em] mb-3">
                                 Previous
                             </p>
                             {prevProject ? (
@@ -213,7 +212,7 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
                                     href={`/projects/${prevProject.slug}`}
                                     className="group inline-flex items-center justify-between gap-6 w-full"
                                 >
-                                    <span className="text-xl sm:text-2xl font-anton leading-tight group-hover:text-primary transition-colors">
+                                    <span className="font-display text-xl sm:text-2xl font-semibold tracking-[-0.02em] leading-tight group-hover:text-primary transition-colors">
                                         {prevProject.title}
                                     </span>
                                     <ArrowLeft className="shrink-0 opacity-60 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
@@ -224,7 +223,7 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
                         </div>
 
                         <div className="p-7 md:p-10">
-                            <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mb-3">
+                            <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-[0.2em] mb-3">
                                 Next
                             </p>
                             {nextProject ? (
@@ -232,7 +231,7 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
                                     href={`/projects/${nextProject.slug}`}
                                     className="group inline-flex items-center justify-between gap-6 w-full"
                                 >
-                                    <span className="text-xl sm:text-2xl font-anton leading-tight group-hover:text-primary transition-colors">
+                                    <span className="font-display text-xl sm:text-2xl font-semibold tracking-[-0.02em] leading-tight group-hover:text-primary transition-colors">
                                         {nextProject.title}
                                     </span>
                                     <ArrowRight className="shrink-0 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
@@ -246,7 +245,7 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
 
                 {moreProjects.length > 0 && (
                     <div className="fade-in-later max-w-[900px] mx-auto mt-14">
-                        <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mb-5">
+                        <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-[0.2em] mb-5">
                             More projects
                         </p>
                         <div className="grid md:grid-cols-3 gap-3">
@@ -254,12 +253,12 @@ const ProjectDetails = ({ project, prevProject, nextProject, moreProjects }: Pro
                                 <TransitionLink
                                     key={p.slug}
                                     href={`/projects/${p.slug}`}
-                                    className="group border border-border bg-background hover:bg-primary/5 transition-colors p-6"
+                                    className="group rounded-2xl border border-border bg-background hover:border-primary/40 hover:bg-primary/5 transition-colors p-6"
                                 >
-                                    <p className="text-sm text-muted-foreground mb-2">
+                                    <p className="font-mono text-xs tabular-nums text-muted-foreground mb-2">
                                         {p.year}
                                     </p>
-                                    <p className="font-anton text-xl leading-tight group-hover:text-primary transition-colors">
+                                    <p className="font-display text-xl font-semibold tracking-[-0.02em] leading-tight group-hover:text-primary transition-colors">
                                         {p.title}
                                     </p>
                                     <p className="mt-3 text-xs text-muted-foreground">
